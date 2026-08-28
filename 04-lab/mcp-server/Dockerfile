@@ -13,8 +13,9 @@ RUN pip install --no-cache-dir -e .
 # Copy application code
 COPY weather.py ./
 
-# Expose port (Cloud Run will override this)
-EXPOSE 8080
+# Khớp với cổng mặc định trong weather.py: int(os.getenv("PORT", 8085)).
+# Cloud Run tự đặt biến PORT nên sẽ ghi đè giá trị này khi deploy.
+EXPOSE 8085
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
