@@ -44,14 +44,14 @@ User: "Thời tiết HN?"                     User: "Thời tiết HN?"
    ┌────────┐                                ┌────────┐
    │ Model  │                                │ Model  │
    │        │                                │        │ ← biết có tool get_weather
-   │ "Tôi   │                                │ "Hãy   │
-   │ không  │                                │  gọi   │
-   │ biết"  │                                │ get_   │
-   │        │                                │ weather│
-   └────────┘                                │("HN")  │
-                                             └───┬────┘
-   Model bó tay vì                               │
-   không có dữ liệu                              ▼
+   │ "HN    │                                │ "Hãy   │
+   │ nắng,  │                                │  gọi   │
+   │ 25-30°C│                                │ get_   │
+   │ khô    │                                │ weather│
+   │ ráo"   │                                │("HN")  │
+   └────────┘                                └───┬────┘
+   Model KHÔNG nói "tôi không biết"              │
+   Nó BỊA — trôi chảy, tự tin, và SAI            ▼
                                              App chạy hàm
                                                   │
                                                   ▼
@@ -63,7 +63,14 @@ User: "Thời tiết HN?"                     User: "Thời tiết HN?"
                                              └────────┘
 ```
 
-**Điểm mấu chốt:** Model **KHÔNG chạy** hàm. Nó chỉ nói *"hãy gọi hàm X với tham số Y"*.
+**Điểm mấu chốt 1:** Model **KHÔNG chạy** hàm. Nó chỉ nói *"hãy gọi hàm X với tham số Y"*.
+
+**Điểm mấu chốt 2:** Không có tool, model **không từ chối** — nó **bịa**. Chạy thử thật với
+cùng câu hỏi nhưng bỏ tham số `tools`, Gemini trả lời "Hà Nội nắng nhẹ 25–30°C, không có mưa"
+và khuyên đội mũ, bôi kem chống nắng — trong khi dữ liệu thật là trời đang mưa, lẽ ra phải
+mang ô. Nó sai một cách trôi chảy và đáng tin, không kèm dấu hiệu cảnh báo nào.
+
+Vì vậy Function Calling không chỉ giúp model *biết thêm*, mà để **chặn nó khỏi bịa**.
 
 ---
 
