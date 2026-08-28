@@ -135,18 +135,27 @@ async def health_check() -> str:
     """Health check endpoint for deployment verification."""
     return "✅ Weather MCP Server is running! Ready to provide weather data for Australian cities and worldwide."
 
-print("✅ MCP server initialized with Streamable HTTP transport")
-print("🔧 Available tools: get_current_weather, get_forecast, health_check")
+import sys
+
+# Log ra stderr, KHÔNG dùng stdout: ở chế độ stdio, stdout là kênh truyền
+# JSON-RPC của MCP — in vào đó sẽ làm hỏng giao thức.
+print("✅ MCP server initialized", file=sys.stderr)
+print("🔧 Available tools: get_current_weather, get_forecast, health_check", file=sys.stderr)
 
 if __name__ == "__main__":
-    import sys
-    
-    is_cloud_run = bool(os.getenv("PORT"))
-    is_standalone = len(sys.argv) == 1 and sys.stdin.isatty()
-    
-    if is_cloud_run or is_standalone:
-        print(f"🚀 Starting MCP server on http://0.0.0.0:{port}/mcp")
-        mcp.run(transport="streamable-http")
-    else:
+    # Transport mặc định là Streamable HTTP — cả Cloud Run lẫn ADK agent
+    # (http://localhost:8085/mcp) đều mong đợi HTTP.
+    #
+    # Trước đây transport được chọn bằng sys.stdin.isatty(), nên khi chạy nền,
+    # chạy qua script, hoặc chạy trong Docker (đều không có TTY) server âm thầm
+    # rơi vào stdio và không bao giờ mở cổng.
+    #
+    # Đặt MCP_TRANSPORT=stdio khi muốn chạy như subprocess của một MCP client.
+    transport = os.getenv("MCP_TRANSPORT", "streamable-http")
+
+    if transport == "stdio":
         print("Starting FastMCP server in stdio mode for local client", file=sys.stderr)
         mcp.run()
+    else:
+        print(f"🚀 Starting MCP server on http://0.0.0.0:{port}/mcp", file=sys.stderr)
+        mcp.run(transport="streamable-http")
