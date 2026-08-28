@@ -18,13 +18,19 @@ day26-mcp/
 │   ├── weather_server.py
 │   └── weather_client.py
 │
-└── 03-production/           ← Bước 3: Auth, Tool Registry, Versioning
+├── 03-production/           ← Bước 3: Auth, Tool Registry, Versioning
+│   ├── README.md
+│   ├── auth_server.py
+│   ├── auth_client.py
+│   ├── registry.json
+│   ├── registry_client.py
+│   ├── versioned_server.py
+│   └── versioned_client.py
+│
+└── 04-lab/                  ← Bước 4: Agent ADK + MCP server từ xa (HTTP)
     ├── README.md
-    ├── auth_server.py
-    ├── auth_client.py
-    ├── registry.json
-    ├── registry_client.py
-    └── versioned_server.py
+    ├── mcp-server/          ← FastMCP + WeatherAPI.com, có Dockerfile
+    └── mcp-client/          ← Agent Google ADK, giao diện `adk web`
 ```
 
 ## Quick start
@@ -167,7 +173,8 @@ MCP server phục vụ qua **HTTP** cho nhiều client → cần xác thực. MC
 
 - Server: cấu hình `AuthSettings` + implement `TokenVerifier` protocol
 - Client: gửi header `Authorization: Bearer <token>` qua `httpx.AsyncClient`
-- Không có token → 401, token sai → 403, logic tool không biết gì về auth
+- Không có token → 401, token sai → 401 (`invalid_token`, đúng chuẩn RFC 6750);
+  403 dành cho token hợp lệ nhưng thiếu scope. Logic tool không biết gì về auth
 
 | Tầng | Demo (stdio) | Production (HTTP) |
 |---|---|---|
