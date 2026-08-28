@@ -1,0 +1,455 @@
+<title>Tổng hợp Day 26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+:root{
+  --ground:#F2F4F6;
+  --surface:#FFFFFF;
+  --surface-2:#E9EDF1;
+  --ink:#1A1F26;
+  --ink-2:#454F5C;
+  --ink-3:#6B7683;
+  --line:#D3DAE1;
+  --line-strong:#B4BEC8;
+  --rain:#2E6B8A;
+  --rain-soft:#DDEAF1;
+  --sun:#B8791F;
+  --sun-soft:#F7EBD6;
+  --alert:#A33B2A;
+  --alert-soft:#F6E2DE;
+  --term-bg:#1B2129;
+  --term-ink:#D6DEE7;
+  --term-dim:#7C8899;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161B;
+    --surface:#1A2027;
+    --surface-2:#232B34;
+    --ink:#E6EBF0;
+    --ink-2:#B0BAC6;
+    --ink-3:#818D9B;
+    --line:#2C353F;
+    --line-strong:#3D4854;
+    --rain:#6FB4D6;
+    --rain-soft:#16303D;
+    --sun:#E0A24A;
+    --sun-soft:#392A13;
+    --alert:#E08573;
+    --alert-soft:#3A1E18;
+    --term-bg:#0C1015;
+    --term-ink:#D6DEE7;
+    --term-dim:#6B7788;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161B;
+  --surface:#1A2027;
+  --surface-2:#232B34;
+  --ink:#E6EBF0;
+  --ink-2:#B0BAC6;
+  --ink-3:#818D9B;
+  --line:#2C353F;
+  --line-strong:#3D4854;
+  --rain:#6FB4D6;
+  --rain-soft:#16303D;
+  --sun:#E0A24A;
+  --sun-soft:#392A13;
+  --alert:#E08573;
+  --alert-soft:#3A1E18;
+  --term-bg:#0C1015;
+  --term-ink:#D6DEE7;
+  --term-dim:#6B7788;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:62rem;
+  margin:0 auto;
+  padding:clamp(1.5rem,4vw,4rem) clamp(1.1rem,4vw,2.5rem) 5rem;
+  display:flex;
+  flex-direction:column;
+  gap:3.25rem;
+}
+
+h1,h2,h3,.eyebrow,.pill,.metaK,th,.lane,.big{
+  font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+}
+
+.masthead{display:flex;flex-direction:column;gap:1.4rem}
+.eyebrow{
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rain);
+}
+h1{
+  font-size:clamp(2.2rem,6.5vw,3.8rem);
+  font-weight:800;line-height:1.0;letter-spacing:-.024em;
+  margin:0;text-wrap:balance;
+}
+.deck{
+  margin:0;max-width:36em;
+  font-size:clamp(1.02rem,2.2vw,1.2rem);
+  color:var(--ink-2);
+}
+.meta{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:3px;
+  overflow:hidden;
+}
+.meta div{background:var(--surface);padding:.8rem 1rem}
+.metaK{
+  display:block;font-size:.65rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:.25rem;
+}
+.metaV{font-size:.97rem;font-weight:600}
+.metaV.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.87rem;font-weight:400}
+
+section{display:flex;flex-direction:column;gap:1.1rem}
+h2{
+  font-size:1.42rem;font-weight:700;letter-spacing:-.014em;
+  margin:0;padding-bottom:.55rem;border-bottom:2px solid var(--ink);
+  text-wrap:balance;
+}
+h3{font-size:1.02rem;font-weight:700;margin:0;letter-spacing:-.005em}
+p{margin:0;max-width:68ch}
+a{color:var(--rain);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--rain);outline-offset:3px}
+strong{font-weight:600}
+code{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.83em;background:var(--surface-2);
+  padding:.1em .34em;border-radius:2px;
+}
+
+.scoreboard{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));
+  gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:3px;overflow:hidden;
+}
+.score{
+  background:var(--surface);padding:1.1rem 1.2rem;
+  display:flex;flex-direction:column;gap:.3rem;
+}
+.score .big{font-size:2.6rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.score .lbl{font-size:.8rem;color:var(--ink-3)}
+.score.a .big{color:var(--rain)}
+.score.b .big{color:var(--sun)}
+.score.c .big{color:var(--alert)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:36rem;font-size:.93rem}
+th{
+  text-align:left;font-size:.66rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  padding:.7rem 1rem;border-bottom:1px solid var(--line-strong);
+  white-space:nowrap;
+}
+td{padding:.72rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.79rem}
+.pill{
+  display:inline-block;white-space:nowrap;
+  font-size:.67rem;font-weight:700;letter-spacing:.05em;
+  padding:.2rem .55rem;border-radius:2px;
+}
+.ok{background:var(--rain-soft);color:var(--rain)}
+.warn{background:var(--sun-soft);color:var(--sun)}
+.bad{background:var(--alert-soft);color:var(--alert)}
+
+.labs{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem}
+.lab{
+  border:1px solid var(--line);border-top:3px solid var(--rain);
+  border-radius:3px;background:var(--surface);
+  padding:1rem 1.15rem;display:flex;flex-direction:column;gap:.5rem;
+}
+.lab .lane{
+  font-size:.64rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);
+}
+.lab p{font-size:.89rem}
+.lab a{font-size:.86rem;font-weight:600}
+
+.finding{
+  border:1px solid var(--line);border-left:4px solid var(--alert);
+  border-radius:3px;background:var(--surface);
+  padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.55rem;
+}
+.finding .tag{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--alert);
+}
+.findings{display:flex;flex-direction:column;gap:1rem}
+
+.term{
+  background:var(--term-bg);border-radius:4px;overflow:hidden;
+  border:1px solid var(--line-strong);
+}
+.termbar{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-bottom:1px solid rgba(255,255,255,.09);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.06em;color:var(--term-dim);
+}
+.dot{width:8px;height:8px;border-radius:50%;background:#3D4854;flex:none}
+.term pre{
+  margin:0;padding:1rem 1.1rem;overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.79rem;line-height:1.75;color:var(--term-ink);
+}
+.c-dim{color:var(--term-dim)}
+.c-rain{color:#7FC4E3}
+.c-alert{color:#E8907C}
+
+.note{
+  font-size:.9rem;color:var(--ink-2);
+  border-left:2px solid var(--line-strong);padding-left:.9rem;max-width:68ch;
+}
+
+footer{
+  border-top:1px solid var(--line);padding-top:1.1rem;
+  font-size:.83rem;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Day 26 · MCP Tools Integration · Tổng hợp 4 bài</div>
+    <h1>Tổng hợp Day 26</h1>
+    <p class="deck">Toàn bộ bốn bài đã chạy, được kiểm chứng bằng dữ liệu runtime, và <strong>đã sửa xong</strong> sáu lỗi mã nguồn cùng bốn chỗ sai trong tài liệu. Hai việc còn kẹt đều là khoá API — nằm ngoài mã nguồn.</p>
+    <div class="meta">
+      <div><span class="metaK">Học viên</span><span class="metaV">Võ Hồ Nhật Nam</span></div>
+      <div><span class="metaK">Mã học viên</span><span class="metaV mono">2A202601700</span></div>
+      <div><span class="metaK">Ngày</span><span class="metaV">28 / 08 / 2026</span></div>
+      <div><span class="metaK">Môi trường</span><span class="metaV mono">Win 11 · Py 3.14.6</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Kết quả tổng quan</h2>
+    <div class="scoreboard">
+      <div class="score a"><span class="big">4/4</span><span class="lbl">bài chạy được</span></div>
+      <div class="score a"><span class="big">6</span><span class="lbl">lỗi mã nguồn đã sửa</span></div>
+      <div class="score a"><span class="big">4</span><span class="lbl">chỗ tài liệu đã sửa</span></div>
+      <div class="score b"><span class="big">1</span><span class="lbl">việc còn kẹt</span></div>
+    </div>
+    <p>Quá trình chia làm hai giai đoạn. <strong>Giai đoạn 1 — kiểm chứng:</strong> chạy toàn bộ bốn bài với mã nguồn nguyên bản, mọi khác biệt môi trường xử lý bằng cách đổi <em>cách chạy</em> (Bash → PowerShell, <code>PYTHONUTF8</code>, biến <code>PORT</code>), qua đó phát hiện lỗi. <strong>Giai đoạn 2 — sửa:</strong> vá mã nguồn và tài liệu, rồi chạy lại toàn bộ để xác nhận.</p>
+    <p class="note">Sau khi sửa, những biến môi trường phải thêm ở giai đoạn 1 <strong>không còn cần nữa</strong>: <code>registry_client.py</code> chạy được với locale mặc định của Windows, và <code>weather.py</code> mở cổng HTTP mà không cần đặt <code>PORT</code>.</p>
+  </section>
+
+  <section>
+    <h2>Bốn bài</h2>
+    <div class="labs">
+      <div class="lab">
+        <span class="lane">01 · function calling</span>
+        <h3>Schema viết tay</h3>
+        <p>Model phát 2 lời gọi song song trong một lượt; <code>resp.text</code> là <code>None</code> chứng minh nó chỉ sinh JSON. Không có tool, model <strong>bịa</strong> số liệu thời tiết.</p>
+        <a href="01-function-calling/bao-cao-lab01.html">Xem báo cáo →</a>
+      </div>
+      <div class="lab">
+        <span class="lane">02 · mcp basics</span>
+        <h3>Schema tự sinh</h3>
+        <p>Dump <code>input_schema</code> tại runtime cho thấy schema sinh hoàn toàn từ type hints và docstring. Server chạy tool, client không hề có hàm đó.</p>
+        <a href="02-mcp-basics/bao-cao-lab02.html">Xem báo cáo →</a>
+      </div>
+      <div class="lab">
+        <span class="lane">03 · production</span>
+        <h3>Auth · Registry · Version</h3>
+        <p>Cả ba phần chạy. Auth trả đúng mã trạng thái, registry chọn được best match, tool v2 giữ tương thích ngược với client cũ.</p>
+        <a href="03-production/bao-cao-lab03.html">Xem báo cáo →</a>
+      </div>
+      <div class="lab">
+        <span class="lane">04 · adk agent</span>
+        <h3>ADK + MCP từ xa</h3>
+        <p>Bắt trọn một vòng function calling qua ADK Runner. Docker image build và chạy được, phục vụ đủ 3 tool qua HTTP.</p>
+        <a href="04-lab/bao-cao-lab04.html">Xem báo cáo →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sáu lỗi mã nguồn — đã sửa</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Vị trí</th><th>Lỗi và cách sửa</th><th>Xác nhận</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono">1</td>
+            <td class="mono">03/registry_client.py:44</td>
+            <td><code>open(path)</code> thiếu <code>encoding="utf-8"</code> — vỡ trên Windows khi đọc tiếng Việt.<br><strong>Sửa:</strong> thêm <code>encoding="utf-8"</code>.</td>
+            <td><span class="pill ok">Chạy được với locale mặc định</span></td>
+          </tr>
+          <tr>
+            <td class="mono">2</td>
+            <td class="mono">03/registry_client.py:108</td>
+            <td>Unpack 3 giá trị từ <code>streamable_http_client</code>, SDK chỉ yield 2. Dead code chưa từng chạy.<br><strong>Sửa:</strong> unpack 2 giá trị.</td>
+            <td><span class="pill ok">Nhánh HTTP gọi tool thành công</span></td>
+          </tr>
+          <tr>
+            <td class="mono">3</td>
+            <td class="mono">04/mcp-server/weather.py:145</td>
+            <td>Chọn transport bằng <code>sys.stdin.isatty()</code> — chạy nền, chạy script, chạy Docker đều rơi vào stdio, cổng không mở.<br><strong>Sửa:</strong> mặc định HTTP, đặt <code>MCP_TRANSPORT=stdio</code> khi cần stdio.</td>
+            <td><span class="pill ok">Mở :8085 không cần PORT</span></td>
+          </tr>
+          <tr>
+            <td class="mono">4</td>
+            <td class="mono">04/mcp-client/verify_setup.py:85</td>
+            <td>Ping URL Cloud Run hard-code thay vì server thật.<br><strong>Sửa:</strong> import <code>MCP_SERVER_URL</code> từ chính agent, coi mọi mã HTTP là dấu hiệu server sống.</td>
+            <td><span class="pill ok">Báo đỏ đúng khi server tắt</span></td>
+          </tr>
+          <tr>
+            <td class="mono">5</td>
+            <td class="mono">04/mcp-server/weather.py:138</td>
+            <td>Hai <code>print()</code> ghi ra <strong>stdout</strong> — mà ở chế độ stdio stdout chính là kênh JSON-RPC, nên sẽ làm hỏng giao thức.<br><strong>Sửa:</strong> chuyển sang <code>stderr</code>.</td>
+            <td><span class="pill ok">stdio bắt tay sạch</span></td>
+          </tr>
+          <tr>
+            <td class="mono">6</td>
+            <td class="mono">04/mcp-server/Dockerfile:17</td>
+            <td><code>EXPOSE 8080</code> trong khi app mặc định cổng <strong>8085</strong>. Trước đây không ai thấy vì server luôn rơi vào stdio.<br><strong>Sửa:</strong> <code>EXPOSE 8085</code>.</td>
+            <td><span class="pill ok">Container phục vụ 3 tool</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Lỗi 3 là đáng chú ý nhất vì nó tự mâu thuẫn ngay trong output. Trước khi sửa, chạy container đúng như <code>Dockerfile</code> định nghĩa:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>trước · docker run --rm -p 8086:8080 weather-mcp:lab04</div>
+<pre><span class="c-rain">✅ MCP server initialized with Streamable HTTP transport</span>
+<span class="c-alert">Starting FastMCP server in stdio mode for local client</span></pre>
+    </div>
+    <p>Dòng đầu là <code>print()</code> vô điều kiện, luôn khẳng định dùng HTTP. Dòng sau mới là sự thật. Sau khi sửa, cùng lệnh đó:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>sau · docker run --rm -p 8086:8085 weather-mcp:lab04</div>
+<pre><span class="c-rain">🚀 Starting MCP server on http://0.0.0.0:8085/mcp</span>
+INFO:     Uvicorn running on http://0.0.0.0:8085
+
+Server: 'weather'  protocol=2025-11-25   ·   So tool cong bo: <span class="c-rain">3</span></pre>
+    </div>
+    <p class="note">Lỗi 5 và 6 chỉ lộ ra <em>sau khi</em> sửa lỗi 3. Chừng nào server còn âm thầm rơi vào stdio thì chẳng ai phát hiện được cổng khai báo sai, và chừng nào stdio chưa từng được dùng thật thì không ai thấy stdout bị nhiễm log.</p>
+  </section>
+
+  <section>
+    <h2>Bốn chỗ tài liệu sai — đã sửa</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Tài liệu</th><th>Trước</th><th>Sau</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>01/README — panel “Không có Function Calling”</td>
+            <td>Model bó tay, trả lời “Tôi không biết”</td>
+            <td>Sơ đồ vẽ lại cảnh model <strong>bịa</strong>: “HN nắng, 25–30°C, khô ráo”, kèm hai “điểm mấu chốt” thay vì một</td>
+          </tr>
+          <tr>
+            <td>02/README — “So sánh code”</td>
+            <td>“30 dòng schema viết tay”</td>
+            <td><strong>15 dòng</strong> — khớp với README bài 01 và với số đếm thật</td>
+          </tr>
+          <tr>
+            <td>03/README và README gốc — mục Auth</td>
+            <td>“Token sai → 403”</td>
+            <td><strong>401</strong> kèm <code>WWW-Authenticate</code>; ghi rõ 403 dành cho token hợp lệ nhưng thiếu scope</td>
+          </tr>
+          <tr>
+            <td>README gốc — “Cấu trúc repo”</td>
+            <td>Thiếu hẳn <code>04-lab/</code> và <code>versioned_client.py</code></td>
+            <td>Bổ sung đủ, kèm mô tả <code>mcp-server</code> / <code>mcp-client</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Chỗ sai đầu tiên là quan trọng nhất về mặt sư phạm. README cũ dạy rằng thiếu tool thì model sẽ thừa nhận không biết — thực tế nó trả lời sai một cách trôi chảy, không có dấu hiệu cảnh báo. Bản sửa nói thẳng: Function Calling không chỉ giúp model biết thêm, mà để <strong>chặn nó khỏi bịa</strong>.</p>
+  </section>
+
+  <section>
+    <h2>Hai việc kẹt — một đã gỡ</h2>
+    <p>Khác với mười mục ở trên, hai việc này <strong>không nằm trong repo</strong>: chúng là cấu hình tài khoản và khoá dịch vụ bên thứ ba. Kẹt 2 đã được gỡ; kẹt 1 vẫn chờ một quyết định.</p>
+    <div class="findings">
+      <div class="finding">
+        <span class="tag">Kẹt 1 · khoá Gemini bị giới hạn IP</span>
+        <p>Key đang chặn IP <code>14.238.145.226</code> với <code>403 API_KEY_IP_ADDRESS_BLOCKED</code>. Ban đầu chập chờn — có lúc qua, có lúc chặn — nhưng hiện đang chặn liên tục: phép lặp 5 lần cho bài 01 hỏng cả 15 lượt gọi.</p>
+        <p><strong>Đã tìm được đường vòng:</strong> quét các <code>.env</code> của những bài lab cũ trên máy phát hiện 4 khoá khác nhau; một khoá <strong>không</strong> bị giới hạn IP. Khoá đó ở tier khác nên <code>gemini-2.5-flash</code> trả 404, nhưng <code>gemini-3-flash-preview</code> và <code>gemini-3.1-flash-lite</code> chạy tốt và hỗ trợ đầy đủ function calling. Bài 01 và bài 04 đều đã chạy trọn vẹn bằng cấu hình này.</p>
+        <p><strong>Quyết định: giữ nguyên giáo trình.</strong> Không sửa <code>MODEL</code> ở bất kỳ đâu. Việc cần làm nằm ngoài repo — Google Cloud Console → Credentials → khoá gốc → <em>Application restrictions</em> → thêm IP <code>14.238.145.226</code> hoặc đặt <em>None</em>.</p>
+      </div>
+      <div class="finding">
+        <span class="tag">Phát hiện thêm · model của giáo trình đang bị khai tử</span>
+        <p>Khi thử gọi <code>gemini-2.5-flash</code> bằng khoá thay thế, Google trả về:</p>
+        <p><em>“This model models/gemini-2.5-flash is <strong>no longer available to new users</strong>. Please update your code to use models/gemini-3.6-flash.”</em></p>
+        <p>Khoá gốc vẫn dùng được model này chỉ vì project đó đã gọi nó từ trước nên được giữ quyền cũ (grandfathered). Hệ quả: <strong>người mới clone repo về sẽ không chạy được bài 01 và bài 04</strong>, dù mã nguồn hoàn toàn đúng — họ không thể xin được khoá có quyền gọi model này nữa.</p>
+        <p>Model kế nhiệm <code>gemini-3.6-flash</code> đã được kiểm chứng: hoạt động bình thường và phát 2 lời gọi tool song song y hệt <code>gemini-2.5-flash</code>. Báo cáo này <strong>không tự đổi model</strong> vì yêu cầu là giữ đúng giáo trình — đây là kiến nghị để lớp cập nhật tài liệu.</p>
+      </div>
+      <div class="finding" style="border-left-color:var(--rain)">
+        <span class="tag" style="color:var(--rain)">Kẹt 2 · WEATHERAPI_KEY — ĐÃ GỠ</span>
+        <p>Học viên đăng ký khoá miễn phí tại weatherapi.com. Khoá được lưu vĩnh viễn ở biến môi trường mức user, server khởi động lại, và cả ba tool trả dữ liệu thật: Hà Nội <strong>34.4°C, Sunny</strong> (cảm giác 41.9°C), dự báo Đà Nẵng 3 ngày với khả năng mưa <strong>28% → 36% → 90%</strong>.</p>
+        <p>Hai chi tiết khiến việc này dễ làm sai: <code>weather.py</code> <strong>không nạp dotenv</strong> nên file <code>.env</code> vô tác dụng, và <code>API_KEY</code> đọc một lần lúc import nên <strong>phải khởi động lại server</strong> sau khi đặt biến.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Khác biệt môi trường</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Tài liệu viết cho</th><th>Máy chạy thật</th><th>Xử lý giai đoạn 1</th><th>Sau khi sửa code</th></tr></thead>
+        <tbody>
+          <tr><td>Bash — <code>export VAR=x</code></td><td>PowerShell 5.1</td><td class="mono">$env:VAR = "x"</td><td>Vẫn cần — khác biệt shell</td></tr>
+          <tr><td>Locale UTF-8 (macOS/Linux)</td><td>Windows cp1252</td><td class="mono">$env:PYTHONUTF8 = "1"</td><td><span class="pill ok">Không cần nữa</span></td></tr>
+          <tr><td>Chạy trong terminal có TTY</td><td>Chạy nền / Docker</td><td class="mono">PORT=8085</td><td><span class="pill ok">Không cần nữa</span></td></tr>
+          <tr><td><code>claude mcp add</code> qua CLI</td><td>Claude Code bản extension VS Code</td><td class="mono">tạo .mcp.json trực tiếp</td><td>Đã đăng ký</td></tr>
+          <tr><td>Gemini CLI (<code>~/.gemini</code>)</td><td>Chưa cài</td><td>Không áp dụng</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Hai dòng giữa là thước đo bản vá có thật sự giải quyết gốc rễ hay không. Ở giai đoạn 1 chúng là cách đi vòng để bài lab chạy được; sau khi sửa mã nguồn, chúng biến mất — người tiếp theo clone repo về sẽ chạy được ngay trên Windows mà không cần biết tới hai biến này.</p>
+  </section>
+
+  <section>
+    <h2>Hồi quy sau khi sửa</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Chạy lại</th><th>Điều kiện</th><th>Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">02/weather_client.py</td><td>mặc định</td><td><span class="pill ok">Khớp README</span></td></tr>
+          <tr><td class="mono">03/auth_client.py</td><td>server HTTP + bearer token</td><td><span class="pill ok">Lấy được dữ liệu</span></td></tr>
+          <tr><td class="mono">03/registry_client.py</td><td><strong>không</strong> bật PYTHONUTF8</td><td><span class="pill ok">Best match = v2.0.0</span></td></tr>
+          <tr><td class="mono">03/registry_client.py</td><td>ép vào nhánh streamable-http</td><td><span class="pill ok">Hanoi: 29°C, trời mưa</span></td></tr>
+          <tr><td class="mono">03/versioned_client.py</td><td>stdio</td><td><span class="pill ok">v1 và v2 đều chạy</span></td></tr>
+          <tr><td class="mono">04/weather.py</td><td><strong>không</strong> đặt PORT</td><td><span class="pill ok">Mở :8085 qua HTTP</span></td></tr>
+          <tr><td class="mono">04/weather.py</td><td><code>MCP_TRANSPORT=stdio</code></td><td><span class="pill ok">stdio bắt tay sạch</span></td></tr>
+          <tr><td class="mono">04/verify_setup.py</td><td>server đang chạy</td><td><span class="pill ok">5/5 pass, HTTP 406</span></td></tr>
+          <tr><td class="mono">04/verify_setup.py</td><td>server đã tắt</td><td><span class="pill ok">Báo đỏ đúng</span></td></tr>
+          <tr><td class="mono">04 Docker image</td><td>build lại, không biến phụ</td><td><span class="pill ok">Phục vụ 3 tool</span></td></tr>
+          <tr><td class="mono">01/weather_function_calling.py</td><td>khoá thay thế + gemini-3-flash-preview</td><td><span class="pill ok">2 lời gọi tool, trả lời đủ</span></td></tr>
+          <tr><td class="mono">04 · 3 tool WeatherAPI</td><td>có WEATHERAPI_KEY</td><td><span class="pill ok">Dữ liệu thật, kể cả ca lỗi</span></td></tr>
+          <tr><td class="mono">04 · ADK Runner</td><td>toàn bộ ngăn xếp</td><td><span class="pill ok">Gemini tổng hợp dự báo 3 ngày</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>Võ Hồ Nhật Nam · 2A202601700</span>
+    <span>Day26-MCP-Tools-Integration</span>
+    <span>Mã nguồn giữ nguyên, không chỉnh sửa</span>
+  </footer>
+
+</div>

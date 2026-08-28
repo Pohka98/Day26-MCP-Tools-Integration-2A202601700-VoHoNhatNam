@@ -1,0 +1,364 @@
+<title>Kiểm chứng MCP Production</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+:root{
+  --ground:#F2F4F6;
+  --surface:#FFFFFF;
+  --surface-2:#E9EDF1;
+  --ink:#1A1F26;
+  --ink-2:#454F5C;
+  --ink-3:#6B7683;
+  --line:#D3DAE1;
+  --line-strong:#B4BEC8;
+  --rain:#2E6B8A;
+  --rain-soft:#DDEAF1;
+  --sun:#B8791F;
+  --sun-soft:#F7EBD6;
+  --alert:#A33B2A;
+  --alert-soft:#F6E2DE;
+  --term-bg:#1B2129;
+  --term-ink:#D6DEE7;
+  --term-dim:#7C8899;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161B;
+    --surface:#1A2027;
+    --surface-2:#232B34;
+    --ink:#E6EBF0;
+    --ink-2:#B0BAC6;
+    --ink-3:#818D9B;
+    --line:#2C353F;
+    --line-strong:#3D4854;
+    --rain:#6FB4D6;
+    --rain-soft:#16303D;
+    --sun:#E0A24A;
+    --sun-soft:#392A13;
+    --alert:#E08573;
+    --alert-soft:#3A1E18;
+    --term-bg:#0C1015;
+    --term-ink:#D6DEE7;
+    --term-dim:#6B7788;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161B;
+  --surface:#1A2027;
+  --surface-2:#232B34;
+  --ink:#E6EBF0;
+  --ink-2:#B0BAC6;
+  --ink-3:#818D9B;
+  --line:#2C353F;
+  --line-strong:#3D4854;
+  --rain:#6FB4D6;
+  --rain-soft:#16303D;
+  --sun:#E0A24A;
+  --sun-soft:#392A13;
+  --alert:#E08573;
+  --alert-soft:#3A1E18;
+  --term-bg:#0C1015;
+  --term-ink:#D6DEE7;
+  --term-dim:#6B7788;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:60rem;
+  margin:0 auto;
+  padding:clamp(1.5rem,4vw,4rem) clamp(1.1rem,4vw,2.5rem) 5rem;
+  display:flex;
+  flex-direction:column;
+  gap:3.25rem;
+}
+
+h1,h2,h3,.eyebrow,.pill,.metaK,th,.lane{
+  font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+}
+
+.masthead{display:flex;flex-direction:column;gap:1.4rem}
+.eyebrow{
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rain);
+}
+h1{
+  font-size:clamp(2.1rem,6vw,3.4rem);
+  font-weight:800;line-height:1.02;letter-spacing:-.022em;
+  margin:0;text-wrap:balance;
+}
+.deck{
+  margin:0;max-width:34em;
+  font-size:clamp(1.02rem,2.2vw,1.19rem);
+  color:var(--ink-2);
+}
+.meta{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:3px;
+  overflow:hidden;
+}
+.meta div{background:var(--surface);padding:.8rem 1rem}
+.metaK{
+  display:block;font-size:.65rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:.25rem;
+}
+.metaV{font-size:.97rem;font-weight:600}
+.metaV.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.87rem;font-weight:400}
+
+section{display:flex;flex-direction:column;gap:1.1rem}
+h2{
+  font-size:1.42rem;font-weight:700;letter-spacing:-.014em;
+  margin:0;padding-bottom:.55rem;border-bottom:2px solid var(--ink);
+  text-wrap:balance;
+  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
+}
+h2 .lane{
+  font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--rain);background:var(--rain-soft);
+  padding:.18rem .5rem;border-radius:2px;
+}
+h3{font-size:1.03rem;font-weight:700;margin:0;letter-spacing:-.005em}
+p{margin:0;max-width:68ch}
+a{color:var(--rain);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--rain);outline-offset:3px}
+strong{font-weight:600}
+code{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.83em;background:var(--surface-2);
+  padding:.1em .34em;border-radius:2px;
+}
+
+.term{
+  background:var(--term-bg);border-radius:4px;overflow:hidden;
+  border:1px solid var(--line-strong);
+}
+.termbar{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-bottom:1px solid rgba(255,255,255,.09);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.06em;color:var(--term-dim);
+}
+.dot{width:8px;height:8px;border-radius:50%;background:#3D4854;flex:none}
+.term pre{
+  margin:0;padding:1rem 1.1rem;overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.79rem;line-height:1.75;color:var(--term-ink);
+}
+.c-dim{color:var(--term-dim)}
+.c-rain{color:#7FC4E3}
+.c-sun{color:#E6B366}
+.c-alert{color:#E8907C}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.94rem}
+th{
+  text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  padding:.7rem 1rem;border-bottom:1px solid var(--line-strong);
+  white-space:nowrap;
+}
+td{padding:.72rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.8rem}
+td.num{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.pill{
+  display:inline-block;white-space:nowrap;
+  font-size:.68rem;font-weight:700;letter-spacing:.05em;
+  padding:.2rem .55rem;border-radius:2px;
+}
+.ok{background:var(--rain-soft);color:var(--rain)}
+.warn{background:var(--sun-soft);color:var(--sun)}
+.bad{background:var(--alert-soft);color:var(--alert)}
+
+.finding{
+  border:1px solid var(--line);border-left:4px solid var(--sun);
+  border-radius:3px;background:var(--surface);
+  padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.6rem;
+}
+.finding.critical{border-left-color:var(--alert)}
+.finding .tag{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--sun);
+}
+.finding.critical .tag{color:var(--alert)}
+.findings{display:flex;flex-direction:column;gap:1rem}
+
+.note{
+  font-size:.9rem;color:var(--ink-2);
+  border-left:2px solid var(--line-strong);padding-left:.9rem;max-width:68ch;
+}
+
+footer{
+  border-top:1px solid var(--line);padding-top:1.1rem;
+  font-size:.83rem;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Day 26 · MCP Tools Integration · Lab 03</div>
+    <h1>Kiểm chứng MCP Production</h1>
+    <p class="deck">Chạy đủ ba phần Auth, Tool Registry và Versioning. Tất cả đều cho ra kết quả như README, nhưng quá trình kiểm chứng lộ ra hai lỗi thật trong mã nguồn và một số liệu sai trong tài liệu.</p>
+    <div class="meta">
+      <div><span class="metaK">Học viên</span><span class="metaV">Võ Hồ Nhật Nam</span></div>
+      <div><span class="metaK">Mã học viên</span><span class="metaV mono">2A202601700</span></div>
+      <div><span class="metaK">Ngày chạy</span><span class="metaV">28 / 08 / 2026</span></div>
+      <div><span class="metaK">Thư viện</span><span class="metaV mono">mcp 2.1.1</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="lane">3a</span> Authentication</h2>
+    <p>Server chạy qua Streamable HTTP tại <code>localhost:8000/mcp</code>, client gửi bearer token. Với token hợp lệ, mọi thứ hoạt động đúng:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>terminal 2 — auth_client.py</div>
+<pre>Tools (có auth):
+  - get_weather: Lấy thời tiết hiện tại của một thành phố.
+
+Kết quả: <span class="c-rain">Hanoi: 29°C, trời mưa</span></pre>
+    </div>
+    <p>README liệt kê ba trạng thái auth. Kiểm chứng bằng cách gửi thẳng HTTP request với từng loại token:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Trường hợp</th><th>README nói</th><th>Thực tế</th><th>Kết luận</th></tr></thead>
+        <tbody>
+          <tr><td>Token hợp lệ</td><td class="mono">200</td><td class="mono">200</td><td><span class="pill ok">Khớp</span></td></tr>
+          <tr><td>Thiếu token</td><td class="mono">401</td><td class="mono">401</td><td><span class="pill ok">Khớp</span></td></tr>
+          <tr><td>Token sai</td><td class="mono">403</td><td class="mono">401</td><td><span class="pill warn">Lệch</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Server trả <code>401</code> kèm header <code>WWW-Authenticate: Bearer error="invalid_token"</code> cho cả hai trường hợp thiếu và sai token. Đây là hành vi <strong>đúng chuẩn</strong> RFC 6750 — <code>401</code> dành cho token không hợp lệ, còn <code>403</code> dành cho token hợp lệ nhưng thiếu quyền (insufficient scope). README mô tả sai, không phải SDK sai.</p>
+    <p class="note">Cả hai token trong <code>VALID_TOKENS</code> đều được xác minh: <code>dev-token-abc123</code> và <code>prod-key-xyz789</code> cùng trả 200. Đúng như README nói, logic tool không hề biết gì về auth — SDK xử lý toàn bộ ở tầng transport.</p>
+  </section>
+
+  <section>
+    <h2><span class="lane">3b</span> Tool Registry &amp; Discovery</h2>
+    <div class="finding critical">
+      <span class="tag">Lỗi mã nguồn — chặn hoàn toàn</span>
+      <p><code>registry_client.py</code> dòng 44 gọi <code>open(path)</code> không chỉ định encoding. Trên Windows, Python dùng codec mặc định theo locale (cp1252) nên vỡ ngay khi đọc tiếng Việt trong <code>registry.json</code>:</p>
+      <p><code>UnicodeDecodeError: 'charmap' codec can't decode byte 0x9d in position 192</code></p>
+    </div>
+    <p>Vì yêu cầu là không sửa mã nguồn, cách chạy được điều chỉnh thay vì code — bật UTF-8 mode của Python:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>PowerShell — 03-production</div>
+<pre><span class="c-dim">PS&gt;</span> $env:PYTHONUTF8 = <span class="c-rain">"1"</span>
+<span class="c-dim">PS&gt;</span> python registry_client.py</pre>
+    </div>
+    <p>Sau đó output khớp README. Agent liệt kê 4 tool, tìm theo tag <code>weather</code> ra 2 kết quả, và <code>best_match()</code> chọn đúng phiên bản cao hơn:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>registry_client.py</div>
+<pre>--- Agent cần tool có tag "weather" ---
+Tìm thấy 2 tool(s):
+  • get_weather v1.0.0 (server: weather)
+  • get_weather_v2 v2.0.0 (server: weather-v2)
+
+Best match: <span class="c-rain">get_weather_v2 v2.0.0</span>
+Kết nối tới server [weather-v2]...
+Kết quả: {"api_version": "2.0", "city": "Hanoi", "temp": 29, ...}</pre>
+    </div>
+    <p class="note">Điểm hay của thiết kế này: agent không hề biết trước server nào có tool nào. Nó tra registry theo <em>capability</em> (tag, keyword), rồi <code>connect_and_call()</code> tự chọn đúng transport và gắn token nếu server yêu cầu.</p>
+  </section>
+
+  <section>
+    <h2><span class="lane">3c</span> Versioning &amp; Backward Compatibility</h2>
+    <p>Output khớp README: client đọc <code>server://info</code> trước, biết <code>get_weather</code> đã deprecated, rồi gọi được cả hai phiên bản.</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>versioned_client.py</div>
+<pre>Server: weather-v2 v2.0.0
+Deprecated tools: <span class="c-sun">['get_weather']</span>
+Migration: Chuyển từ get_weather sang get_weather_v2…
+
+[v1] get_weather('Hanoi'):
+  Hanoi: 29°C, trời mưa
+
+[v2] get_weather_v2('Hanoi', forecast=True):
+  { "api_version": "2.0", "temp": 29, "humidity": 82,
+    "forecast": [ {"day": "tomorrow", "temp": 27, …} ] }</pre>
+    </div>
+    <p>README khẳng định tham số optional giúp client cũ không bị break. Kiểm chứng bằng cách gọi <code>get_weather_v2</code> chỉ với <code>city</code>, đúng như một client viết từ thời chưa có v2:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Kiểm chứng</th><th>Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td>Gọi thiếu <code>include_forecast</code> và <code>units</code></td><td>Không lỗi — <code>units</code> mặc định <code>'celsius'</code>, không có khoá <code>forecast</code></td></tr>
+          <tr><td>Schema tự sinh có ghi default không?</td><td><code>required: ['city']</code> — hai tham số mới đều mang <code>default</code> trong schema</td></tr>
+          <tr><td><code>units="fahrenheit"</code> có đổi thật không?</td><td>29°C → <strong>84.2°F</strong>, đúng công thức</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Điểm đáng chú ý: <code>required</code> chỉ chứa <code>city</code>. Chính vì <code>include_forecast</code> và <code>units</code> có giá trị mặc định trong signature Python mà schema tự đánh dấu chúng là optional — lập trình viên không phải khai báo gì thêm. Đây là cùng một cơ chế tự sinh schema đã thấy ở bài 02, nay phục vụ mục đích tương thích ngược.</p>
+  </section>
+
+  <section>
+    <h2>Lỗi phát hiện được — đã sửa</h2>
+    <p>Cả ba mục dưới đây đã được vá và chạy lại để xác nhận. Đáng chú ý: sau khi sửa lỗi 1, <code>registry_client.py</code> chạy được với <strong>locale mặc định của Windows</strong> — không còn cần <code>PYTHONUTF8</code>. Sau khi sửa lỗi 2, nhánh <code>streamable-http</code> gọi tool thành công qua bearer token, trả về <code>Hanoi: 29°C, trời mưa</code>.</p>
+    <div class="findings">
+      <div class="finding critical">
+        <span class="tag">Lỗi 1 · chặn chạy · registry_client.py:44</span>
+        <p><code>open(path)</code> thiếu <code>encoding="utf-8"</code>. Bài lab không chạy được trên Windows nếu không bật UTF-8 mode. Trên macOS/Linux thì không lộ vì locale mặc định đã là UTF-8 — đây là lỗi chỉ xuất hiện trên một nền tảng.</p>
+      </div>
+      <div class="finding critical">
+        <span class="tag">Lỗi 2 · tiềm ẩn · registry_client.py:108</span>
+        <p>Nhánh <code>streamable-http</code> unpack <strong>3</strong> giá trị từ <code>streamable_http_client(...)</code>, nhưng SDK chỉ <code>yield read_stream, write_stream</code> — đúng <strong>2</strong>. Trong khi đó <code>auth_client.py</code> unpack 2 và chạy tốt.</p>
+        <p>Lỗi này <em>không lộ ra</em> khi chạy demo, vì không tool nào trong registry trỏ tới server dùng HTTP. Ép chạy vào nhánh đó thì vỡ ngay:</p>
+      </div>
+    </div>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>ép registry_client vào nhánh streamable-http</div>
+<pre>server 'weather-secure': transport='streamable-http'
+url='http://localhost:8000/mcp'
+
+ExceptionGroup: unhandled errors in a TaskGroup
+  LOI GOC -&gt; <span class="c-alert">ValueError: not enough values to unpack (expected 3, got 2)</span></pre>
+    </div>
+    <div class="findings">
+      <div class="finding">
+        <span class="tag">Lỗi 3 · tài liệu · README mục 3a</span>
+        <p>“Token sai → <code>403</code>” — thực tế là <code>401</code>, và <code>401</code> mới đúng chuẩn RFC 6750. Nên sửa tài liệu, không sửa code.</p>
+      </div>
+    </div>
+    <p class="note">Lỗi 2 đáng chú ý về mặt kỹ thuật hơn lỗi 1: nó là <strong>dead code chưa từng được chạy</strong>. Registry có sẵn server <code>weather-secure</code> dùng HTTP, nhưng cả 4 tool đều trỏ sang server khác, nên nhánh xử lý HTTP không bao giờ được kiểm chứng. Đúng kiểu lỗi chỉ bùng ra ở production khi có tool thật đăng ký qua HTTP.</p>
+  </section>
+
+  <section>
+    <h2>Tổng hợp</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Phần</th><th>Chạy được</th><th>Khớp README</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td>3a — Auth</td><td><span class="pill ok">Có</span></td><td><span class="pill warn">Gần đúng</span></td><td>Mã lỗi token sai là 401, không phải 403</td></tr>
+          <tr><td>3b — Registry</td><td><span class="pill warn">Cần PYTHONUTF8</span></td><td><span class="pill ok">Có</span></td><td>2 lỗi mã nguồn</td></tr>
+          <tr><td>3c — Versioning</td><td><span class="pill ok">Có</span></td><td><span class="pill ok">Có</span></td><td>Backward compat được chứng minh bằng dữ liệu</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Mã nguồn bài lab giữ nguyên, không sửa dòng nào. Mọi điều chỉnh nằm ở biến môi trường lúc chạy.</p>
+  </section>
+
+  <footer>
+    <span>Võ Hồ Nhật Nam · 2A202601700</span>
+    <span>Day26-MCP-Tools-Integration</span>
+    <span>Mã nguồn giữ nguyên, không chỉnh sửa</span>
+  </footer>
+
+</div>

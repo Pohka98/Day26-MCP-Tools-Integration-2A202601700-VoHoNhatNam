@@ -1,0 +1,355 @@
+<title>Kiểm chứng Function Calling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+:root{
+  --ground:#F2F4F6;
+  --surface:#FFFFFF;
+  --surface-2:#E9EDF1;
+  --ink:#1A1F26;
+  --ink-2:#454F5C;
+  --ink-3:#6B7683;
+  --line:#D3DAE1;
+  --line-strong:#B4BEC8;
+  --rain:#2E6B8A;
+  --rain-soft:#DDEAF1;
+  --sun:#B8791F;
+  --sun-soft:#F7EBD6;
+  --term-bg:#1B2129;
+  --term-ink:#D6DEE7;
+  --term-dim:#7C8899;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161B;
+    --surface:#1A2027;
+    --surface-2:#232B34;
+    --ink:#E6EBF0;
+    --ink-2:#B0BAC6;
+    --ink-3:#818D9B;
+    --line:#2C353F;
+    --line-strong:#3D4854;
+    --rain:#6FB4D6;
+    --rain-soft:#16303D;
+    --sun:#E0A24A;
+    --sun-soft:#392A13;
+    --term-bg:#0C1015;
+    --term-ink:#D6DEE7;
+    --term-dim:#6B7788;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161B;
+  --surface:#1A2027;
+  --surface-2:#232B34;
+  --ink:#E6EBF0;
+  --ink-2:#B0BAC6;
+  --ink-3:#818D9B;
+  --line:#2C353F;
+  --line-strong:#3D4854;
+  --rain:#6FB4D6;
+  --rain-soft:#16303D;
+  --sun:#E0A24A;
+  --sun-soft:#392A13;
+  --term-bg:#0C1015;
+  --term-ink:#D6DEE7;
+  --term-dim:#6B7788;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:60rem;
+  margin:0 auto;
+  padding:clamp(1.5rem,4vw,4rem) clamp(1.1rem,4vw,2.5rem) 5rem;
+  display:flex;
+  flex-direction:column;
+  gap:3.25rem;
+}
+
+h1,h2,h3,.eyebrow,.pill,.metaK,th{
+  font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+}
+
+.masthead{display:flex;flex-direction:column;gap:1.4rem}
+.eyebrow{
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rain);
+}
+h1{
+  font-size:clamp(2.1rem,6vw,3.4rem);
+  font-weight:800;line-height:1.02;letter-spacing:-.022em;
+  margin:0;text-wrap:balance;
+}
+.deck{
+  margin:0;max-width:34em;
+  font-size:clamp(1.02rem,2.2vw,1.19rem);
+  color:var(--ink-2);
+}
+.meta{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:3px;
+  overflow:hidden;
+}
+.meta div{background:var(--surface);padding:.8rem 1rem}
+.metaK{
+  display:block;font-size:.65rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:.25rem;
+}
+.metaV{font-size:.97rem;font-weight:600}
+.metaV.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.87rem;font-weight:400}
+
+section{display:flex;flex-direction:column;gap:1.1rem}
+h2{
+  font-size:1.42rem;font-weight:700;letter-spacing:-.014em;
+  margin:0;padding-bottom:.55rem;border-bottom:2px solid var(--ink);
+  text-wrap:balance;
+}
+h3{font-size:1.03rem;font-weight:700;margin:0;letter-spacing:-.005em}
+p{margin:0;max-width:68ch}
+a{color:var(--rain);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--rain);outline-offset:3px}
+strong{font-weight:600}
+code{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.83em;background:var(--surface-2);
+  padding:.1em .34em;border-radius:2px;
+}
+
+.term{
+  background:var(--term-bg);border-radius:4px;overflow:hidden;
+  border:1px solid var(--line-strong);
+}
+.termbar{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-bottom:1px solid rgba(255,255,255,.09);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.06em;color:var(--term-dim);
+}
+.dot{width:8px;height:8px;border-radius:50%;background:#3D4854;flex:none}
+.term pre{
+  margin:0;padding:1rem 1.1rem;overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.79rem;line-height:1.75;color:var(--term-ink);
+}
+.c-dim{color:var(--term-dim)}
+.c-rain{color:#7FC4E3}
+.c-sun{color:#E6B366}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.94rem}
+th{
+  text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  padding:.7rem 1rem;border-bottom:1px solid var(--line-strong);
+  white-space:nowrap;
+}
+td{padding:.72rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.8rem}
+.pill{
+  display:inline-block;white-space:nowrap;
+  font-size:.68rem;font-weight:700;letter-spacing:.05em;
+  padding:.2rem .55rem;border-radius:2px;
+}
+.ok{background:var(--rain-soft);color:var(--rain)}
+.warn{background:var(--sun-soft);color:var(--sun)}
+
+ol.steps{
+  margin:0;padding:0;list-style:none;
+  display:flex;flex-direction:column;gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;
+  counter-reset:s;
+}
+ol.steps li{
+  background:var(--surface);padding:.75rem 1rem;
+  display:grid;grid-template-columns:1.6rem 1fr;gap:.9rem;align-items:baseline;
+  counter-increment:s;font-size:.96rem;
+}
+ol.steps li::before{
+  content:counter(s,decimal-leading-zero);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.74rem;font-weight:700;color:var(--rain);
+}
+
+.finding{
+  border:1px solid var(--sun);border-left:4px solid var(--sun);
+  border-radius:3px;background:var(--surface);
+  padding:1.15rem 1.3rem;display:flex;flex-direction:column;gap:.7rem;
+}
+.finding .tag{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:.67rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--sun);
+}
+.versus{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem}
+.card{
+  border:1px solid var(--line);border-radius:3px;background:var(--surface);
+  padding:1rem 1.15rem;display:flex;flex-direction:column;gap:.6rem;
+}
+.card.sun{border-top:3px solid var(--sun)}
+.card.rain{border-top:3px solid var(--rain)}
+.card h3{font-size:.95rem}
+.card .who{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.04em;color:var(--ink-3);
+}
+.card dl{margin:0;display:flex;flex-direction:column;gap:.55rem;font-size:.92rem}
+.card .row{display:flex;gap:.7rem;align-items:baseline;justify-content:space-between}
+.card dt{color:var(--ink-3);font-size:.82rem;flex:none}
+.card dd{margin:0;font-weight:600;text-align:right}
+.card.sun dd{color:var(--sun)}
+.card.rain dd{color:var(--rain)}
+
+.note{
+  font-size:.9rem;color:var(--ink-2);
+  border-left:2px solid var(--line-strong);padding-left:.9rem;max-width:68ch;
+}
+
+footer{
+  border-top:1px solid var(--line);padding-top:1.1rem;
+  font-size:.83rem;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Day 26 · MCP Tools Integration · Lab 01</div>
+    <h1>Kiểm chứng Function Calling</h1>
+    <p class="deck">Chạy <code>weather_function_calling.py</code> và đối chiếu từng khẳng định trong README với hành vi thật của Gemini. Sáu trong bảy mục khớp — mục còn lại sai theo hướng nguy hiểm hơn README mô tả.</p>
+    <div class="meta">
+      <div><span class="metaK">Học viên</span><span class="metaV">Võ Hồ Nhật Nam</span></div>
+      <div><span class="metaK">Mã học viên</span><span class="metaV mono">2A202601700</span></div>
+      <div><span class="metaK">Ngày chạy</span><span class="metaV">28 / 08 / 2026</span></div>
+      <div><span class="metaK">Model</span><span class="metaV mono">gemini-2.5-flash</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Môi trường và lệnh chạy</h2>
+    <p>README viết lệnh theo cú pháp Bash. Máy chạy là Windows / PowerShell 5.1, nên <code>export</code> phải đổi thành <code>$env:</code> — đây là khác biệt duy nhất so với tài liệu. Mã nguồn giữ nguyên, không sửa một dòng nào.</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>PowerShell — Day26-MCP-Tools-Integration</div>
+<pre><span class="c-dim">PS&gt;</span> cd 01-function-calling
+<span class="c-dim">PS&gt;</span> pip install -r ../requirements.txt
+<span class="c-dim">    → Requirement already satisfied (google-genai 2.14.0, mcp, httpx, uvicorn)</span>
+<span class="c-dim">PS&gt;</span> $env:GEMINI_API_KEY = <span class="c-rain">"&lt;api-key&gt;"</span>   <span class="c-dim"># README ghi: export GEMINI_API_KEY=...</span>
+<span class="c-dim">PS&gt;</span> python weather_function_calling.py</pre>
+    </div>
+    <p class="note">Python 3.14.6 · google-genai 2.14.0. Một trở ngại gặp phải: API key bị giới hạn theo IP nên vài lần chạy trả về <code>403 API_KEY_IP_ADDRESS_BLOCKED</code>. Gỡ giới hạn trong Google Cloud Console thì hết.</p>
+  </section>
+
+  <section>
+    <h2>Bảng kiểm chứng</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Mục trong README</th><th>Kết quả</th><th>Bằng chứng</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cách chạy (3 lệnh)</td><td><span class="pill ok">Khớp</span></td><td>Model trả lời đúng dữ liệu tool</td></tr>
+          <tr><td>Sơ đồ luồng đầu file</td><td><span class="pill ok">Khớp</span></td><td>Output đi đúng thứ tự ba khối</td></tr>
+          <tr><td>Bước 1–5 “Minh hoạ chi tiết”</td><td><span class="pill ok">Khớp</span></td><td>Kể cả chi tiết “gọi 2 lần cho HN và ĐN”</td></tr>
+          <tr><td>Phần 1 — schema viết tay</td><td><span class="pill ok">Khớp</span></td><td class="mono">dòng 27–41 · đúng 15 dòng</td></tr>
+          <tr><td>Phần 2 — hàm thực thi</td><td><span class="pill ok">Khớp</span></td><td class="mono">def get_weather · dòng 45</td></tr>
+          <tr><td>Phần 3 — vòng lặp</td><td><span class="pill ok">Khớp</span></td><td class="mono">dòng 90 · 95 · 97</td></tr>
+          <tr><td>Panel “Không có Function Calling”</td><td><span class="pill warn">Lệch</span></td><td>Model không bó tay — nó bịa</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>README ghi <em>“Schema viết TAY — 15 dòng code”</em>. Đếm thực tế: đúng <strong>15 dòng</strong>, cho <strong>một</strong> tool với <strong>một</strong> tham số kiểu chuỗi. Đây là cơ sở định lượng cho nhược điểm đầu tiên mà README nêu ở cuối bài.</p>
+  </section>
+
+  <section>
+    <h2>Model không chạy hàm — bằng chứng</h2>
+    <p>Khẳng định trung tâm của bài: <em>“Model CHỈ sinh JSON — không hề chạy”</em>. Kiểm chứng bằng cách dừng lại ngay sau lượt gọi đầu tiên, trước khi app thực thi bất cứ thứ gì:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>lượt 1 — phản hồi thô từ Gemini</div>
+<pre>resp.text  = <span class="c-sun">None</span>          <span class="c-dim">← model không sinh chữ nào</span>
+So function_calls: <span class="c-rain">2</span>
+   → get_weather(args={<span class="c-rain">'city': 'Hà Nội'</span>})    <span class="c-dim">[chỉ là JSON, chưa chạy gì]</span>
+   → get_weather(args={<span class="c-rain">'city': 'Đà Nẵng'</span>})   <span class="c-dim">[chỉ là JSON, chưa chạy gì]</span>
+
+<span class="c-dim">Warning: non-text parts in the response: ['function_call', 'function_call']</span></pre>
+    </div>
+    <p><code>resp.text</code> là <code>None</code>. Lượt đó model không trả lời người dùng chữ nào — nó chỉ phát ra hai lời gọi hàm. Trong lần chạy đầy đủ, điều này lộ ra qua từng cặp dòng: <code>[model yêu cầu]</code> luôn đi trước <code>[app thực thi]</code>.</p>
+    <ol class="steps">
+      <li>App định nghĩa <code>FunctionDeclaration</code> — schema viết tay</li>
+      <li>App gửi prompt kèm danh sách tool tới Gemini</li>
+      <li>Model trả về <code>function_calls</code>, không sinh văn bản</li>
+      <li><strong>App</strong> chạy <code>get_weather()</code> rồi gửi kết quả ngược lại</li>
+      <li>Model tổng hợp câu trả lời cuối cho người dùng</li>
+    </ol>
+    <p class="note">Model tự suy ra phải gọi hai lần từ một câu hỏi duy nhất, và phát <strong>cả hai song song trong cùng một lượt</strong> chứ không hỏi tuần tự. Đó là lý do code phải viết <code>for fc in resp.function_calls</code> thay vì xử lý một lời gọi.</p>
+  </section>
+
+  <section>
+    <h2>Phát hiện: model không bó tay, model bịa</h2>
+    <div class="finding">
+      <span class="tag">Lệch so với tài liệu</span>
+      <p>README vẽ model khi không có tool sẽ nói <em>“Tôi không biết”</em> và <em>“bó tay vì không có dữ liệu”</em>. Chạy thật với cùng câu hỏi nhưng bỏ tham số <code>tools</code>, model trả lời trôi chảy, chi tiết, có cả nhiệt độ lẫn lời khuyên — và <strong>sai hoàn toàn</strong>.</p>
+    </div>
+    <div class="versus">
+      <div class="card sun">
+        <span class="who">không có tool</span>
+        <h3>Model tự bịa</h3>
+        <dl>
+          <div class="row"><dt>Hà Nội</dt><dd>nắng nhẹ · 25–30°C<br>không có mưa</dd></div>
+          <div class="row"><dt>Đà Nẵng</dt><dd>nắng chói chang<br>30–35°C · quang mây</dd></div>
+        </dl>
+      </div>
+      <div class="card rain">
+        <span class="who">có tool</span>
+        <h3>Dữ liệu thật từ hàm</h3>
+        <dl>
+          <div class="row"><dt>Hà Nội</dt><dd>29°C · trời mưa nhẹ<br>độ ẩm 82%</dd></div>
+          <div class="row"><dt>Đà Nẵng</dt><dd>30°C · nhiều mây<br>độ ẩm 78%</dd></div>
+        </dl>
+      </div>
+    </div>
+    <p>Bản bịa còn khuyên người dùng <em>“đội mũ, đeo kính râm, bôi kem chống nắng”</em> cho Hà Nội — trong khi dữ liệu thật là trời đang mưa và lẽ ra phải mang ô.</p>
+    <p>Đây là bài học <strong>mạnh hơn</strong> điều README định dạy. Vấn đề không phải model từ chối trả lời — nếu vậy thì còn dễ, người dùng nhận ra ngay là thiếu dữ liệu. Vấn đề là nó trả lời <strong>sai một cách trôi chảy và đáng tin</strong>, không kèm bất kỳ dấu hiệu cảnh báo nào. Function Calling vì thế không chỉ giúp model “biết thêm”, mà để <strong>chặn nó khỏi bịa</strong>.</p>
+    <p class="note"><strong>Đã sửa:</strong> sơ đồ trong README bài 01 được vẽ lại — model không còn nói “Tôi không biết” mà hiện đúng cảnh nó bịa “HN nắng, 25–30°C, khô ráo”, kèm hai “điểm mấu chốt” thay vì một.</p>
+    <p class="note"><strong>Giới hạn của quan sát này:</strong> kết luận dựa trên <strong>một</strong> lần chạy. Phép lặp 5 lần để đo tần suất đã được chuẩn bị nhưng không chạy được — API key bị giới hạn IP chặn toàn bộ 15 lượt gọi. Về mặt định tính kết luận vẫn vững (model rõ ràng không nói “tôi không biết” như README vẽ), nhưng chưa có số liệu về việc nó bịa <em>bao nhiêu phần trăm</em> số lần.</p>
+  </section>
+
+  <section>
+    <h2>Ba nhược điểm và hướng đi tiếp</h2>
+    <p>README kết lại bằng ba giới hạn của Function Calling thuần. Cả ba đều quan sát được ngay trong file 124 dòng này:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Nhược điểm</th><th>Biểu hiện trong bài</th></tr></thead>
+        <tbody>
+          <tr><td>Schema viết tay</td><td>15 dòng boilerplate cho một tool với một tham số, phải tự giữ khớp với hàm thật</td></tr>
+          <tr><td>Tool gắn chặt trong app</td><td>Schema và hàm nằm cùng file với vòng lặp gọi model — app khác muốn dùng phải chép cả hai</td></tr>
+          <tr><td>Mỗi provider một format</td><td><code>types.FunctionDeclaration</code> là API riêng của Google; đổi nhà cung cấp phải viết lại schema</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Bài <strong>02 — MCP Basics</strong> tách tool ra thành server độc lập để gỡ cả ba.</p>
+  </section>
+
+  <footer>
+    <span>Võ Hồ Nhật Nam · 2A202601700</span>
+    <span>Day26-MCP-Tools-Integration</span>
+    <span>Mã nguồn giữ nguyên, không chỉnh sửa</span>
+  </footer>
+
+</div>

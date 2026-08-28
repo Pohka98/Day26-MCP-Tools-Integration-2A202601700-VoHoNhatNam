@@ -1,0 +1,419 @@
+<title>Kiểm chứng Weather Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+:root{
+  --ground:#F2F4F6;
+  --surface:#FFFFFF;
+  --surface-2:#E9EDF1;
+  --ink:#1A1F26;
+  --ink-2:#454F5C;
+  --ink-3:#6B7683;
+  --line:#D3DAE1;
+  --line-strong:#B4BEC8;
+  --rain:#2E6B8A;
+  --rain-soft:#DDEAF1;
+  --sun:#B8791F;
+  --sun-soft:#F7EBD6;
+  --alert:#A33B2A;
+  --alert-soft:#F6E2DE;
+  --term-bg:#1B2129;
+  --term-ink:#D6DEE7;
+  --term-dim:#7C8899;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161B;
+    --surface:#1A2027;
+    --surface-2:#232B34;
+    --ink:#E6EBF0;
+    --ink-2:#B0BAC6;
+    --ink-3:#818D9B;
+    --line:#2C353F;
+    --line-strong:#3D4854;
+    --rain:#6FB4D6;
+    --rain-soft:#16303D;
+    --sun:#E0A24A;
+    --sun-soft:#392A13;
+    --alert:#E08573;
+    --alert-soft:#3A1E18;
+    --term-bg:#0C1015;
+    --term-ink:#D6DEE7;
+    --term-dim:#6B7788;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161B;
+  --surface:#1A2027;
+  --surface-2:#232B34;
+  --ink:#E6EBF0;
+  --ink-2:#B0BAC6;
+  --ink-3:#818D9B;
+  --line:#2C353F;
+  --line-strong:#3D4854;
+  --rain:#6FB4D6;
+  --rain-soft:#16303D;
+  --sun:#E0A24A;
+  --sun-soft:#392A13;
+  --alert:#E08573;
+  --alert-soft:#3A1E18;
+  --term-bg:#0C1015;
+  --term-ink:#D6DEE7;
+  --term-dim:#6B7788;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:60rem;
+  margin:0 auto;
+  padding:clamp(1.5rem,4vw,4rem) clamp(1.1rem,4vw,2.5rem) 5rem;
+  display:flex;
+  flex-direction:column;
+  gap:3.25rem;
+}
+
+h1,h2,h3,.eyebrow,.pill,.metaK,th,.lane{
+  font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+}
+
+.masthead{display:flex;flex-direction:column;gap:1.4rem}
+.eyebrow{
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rain);
+}
+h1{
+  font-size:clamp(2.1rem,6vw,3.4rem);
+  font-weight:800;line-height:1.02;letter-spacing:-.022em;
+  margin:0;text-wrap:balance;
+}
+.deck{
+  margin:0;max-width:34em;
+  font-size:clamp(1.02rem,2.2vw,1.19rem);
+  color:var(--ink-2);
+}
+.meta{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:3px;
+  overflow:hidden;
+}
+.meta div{background:var(--surface);padding:.8rem 1rem}
+.metaK{
+  display:block;font-size:.65rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:.25rem;
+}
+.metaV{font-size:.97rem;font-weight:600}
+.metaV.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.87rem;font-weight:400}
+
+section{display:flex;flex-direction:column;gap:1.1rem}
+h2{
+  font-size:1.42rem;font-weight:700;letter-spacing:-.014em;
+  margin:0;padding-bottom:.55rem;border-bottom:2px solid var(--ink);
+  text-wrap:balance;
+}
+h3{font-size:1.03rem;font-weight:700;margin:0;letter-spacing:-.005em}
+p{margin:0;max-width:68ch}
+a{color:var(--rain);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--rain);outline-offset:3px}
+strong{font-weight:600}
+code{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.83em;background:var(--surface-2);
+  padding:.1em .34em;border-radius:2px;
+}
+
+.term{
+  background:var(--term-bg);border-radius:4px;overflow:hidden;
+  border:1px solid var(--line-strong);
+}
+.termbar{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-bottom:1px solid rgba(255,255,255,.09);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.06em;color:var(--term-dim);
+}
+.dot{width:8px;height:8px;border-radius:50%;background:#3D4854;flex:none}
+.term pre{
+  margin:0;padding:1rem 1.1rem;overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.79rem;line-height:1.75;color:var(--term-ink);
+}
+.c-dim{color:var(--term-dim)}
+.c-rain{color:#7FC4E3}
+.c-sun{color:#E6B366}
+.c-alert{color:#E8907C}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.94rem}
+th{
+  text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  padding:.7rem 1rem;border-bottom:1px solid var(--line-strong);
+  white-space:nowrap;
+}
+td{padding:.72rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.8rem}
+.pill{
+  display:inline-block;white-space:nowrap;
+  font-size:.68rem;font-weight:700;letter-spacing:.05em;
+  padding:.2rem .55rem;border-radius:2px;
+}
+.ok{background:var(--rain-soft);color:var(--rain)}
+.warn{background:var(--sun-soft);color:var(--sun)}
+.bad{background:var(--alert-soft);color:var(--alert)}
+
+ol.steps{
+  margin:0;padding:0;list-style:none;
+  display:flex;flex-direction:column;gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;
+  counter-reset:s;
+}
+ol.steps li{
+  background:var(--surface);padding:.75rem 1rem;
+  display:grid;grid-template-columns:1.6rem 1fr;gap:.9rem;align-items:baseline;
+  counter-increment:s;font-size:.96rem;
+}
+ol.steps li::before{
+  content:counter(s,decimal-leading-zero);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.74rem;font-weight:700;color:var(--rain);
+}
+
+.finding{
+  border:1px solid var(--line);border-left:4px solid var(--sun);
+  border-radius:3px;background:var(--surface);
+  padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.6rem;
+}
+.finding.critical{border-left-color:var(--alert)}
+.finding .tag{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--sun);
+}
+.finding.critical .tag{color:var(--alert)}
+.findings{display:flex;flex-direction:column;gap:1rem}
+
+.note{
+  font-size:.9rem;color:var(--ink-2);
+  border-left:2px solid var(--line-strong);padding-left:.9rem;max-width:68ch;
+}
+
+footer{
+  border-top:1px solid var(--line);padding-top:1.1rem;
+  font-size:.83rem;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Day 26 · MCP Tools Integration · Lab 04</div>
+    <h1>Kiểm chứng Weather Agent</h1>
+    <p class="deck">Agent Google ADK nối tới MCP server qua Streamable HTTP. Toàn bộ tầng giao thức và tầng điều phối đều chạy đúng; hai thứ còn thiếu đều là khoá API, không phải lỗi code.</p>
+    <div class="meta">
+      <div><span class="metaK">Học viên</span><span class="metaV">Võ Hồ Nhật Nam</span></div>
+      <div><span class="metaK">Mã học viên</span><span class="metaV mono">2A202601700</span></div>
+      <div><span class="metaK">Ngày chạy</span><span class="metaV">28 / 08 / 2026</span></div>
+      <div><span class="metaK">Model</span><span class="metaV mono">gemini-2.5-flash</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Trạng thái tổng quan</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Thành phần</th><th>Trạng thái</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td><code>uv sync</code> cả hai project</td><td><span class="pill ok">Xong</span></td><td>Server và client đều có venv riêng</td></tr>
+          <tr><td>MCP server tại <code>:8085/mcp</code></td><td><span class="pill ok">Chạy</span></td><td>Công bố đủ 3 tool</td></tr>
+          <tr><td><code>verify_setup.py</code></td><td><span class="pill ok">5/5 pass</span></td><td>Một check gây hiểu nhầm — xem phần lỗi</td></tr>
+          <tr><td>ADK khám phá tool qua MCP</td><td><span class="pill ok">Đúng</span></td><td>3 tool nạp vào agent tự động</td></tr>
+          <tr><td>Vòng lặp function calling đầy đủ</td><td><span class="pill ok">Chứng minh</span></td><td>Bắt được trọn vẹn một lượt</td></tr>
+          <tr><td>Giao diện <code>adk web</code></td><td><span class="pill ok">Chạy</span></td><td><code>127.0.0.1:8000</code></td></tr>
+          <tr><td>Docker image</td><td><span class="pill ok">Build + chạy</span></td><td>326 MB, cần <code>-e PORT</code> mới mở cổng</td></tr>
+          <tr><td>Dữ liệu thời tiết thật</td><td><span class="pill ok">Đã chạy</span></td><td>WeatherAPI trả dữ liệu thật cho cả 3 tool</td></tr>
+          <tr><td>Gọi Gemini ổn định</td><td><span class="pill warn">Cần đổi khoá</span></td><td>Khoá gốc bị giới hạn IP; khoá thay thế chạy tốt</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>MCP Server — ba tool đúng như tài liệu</h2>
+    <p>Kết nối vào <code>localhost:8085/mcp</code> và hỏi <code>list_tools()</code>, server công bố đúng ba tool mà bảng trong README liệt kê:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>list_tools() qua Streamable HTTP</div>
+<pre>Server: <span class="c-rain">'weather'</span>  protocol=2025-11-25
+So tool cong bo: 3
+  - get_current_weather   params=['city']          required=['city']
+  - get_forecast          params=['city','days']   required=['city']
+  - health_check          params=[]                required=[]</pre>
+    </div>
+    <p>Schema vẫn tự sinh từ type hints như bài 02 — <code>get_forecast</code> có <code>days</code> mang <code>"default": 3</code> nên không nằm trong <code>required</code>, đúng với chữ ký <code>get_forecast(city: str, days: int = 3)</code>.</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>gọi tool khi chưa có WEATHERAPI_KEY</div>
+<pre>health_check()
+  <span class="c-rain">✅ Weather MCP Server is running!</span>
+
+get_current_weather('Hanoi')
+  <span class="c-sun">❌ WeatherAPI key not configured. Please set WEATHERAPI_KEY…</span></pre>
+    </div>
+    <p><code>health_check</code> chạy trọn vẹn vì không cần khoá ngoài. Hai tool còn lại trả thông báo lỗi <strong>có kiểm soát</strong> thay vì ném exception — thiết kế tốt: agent nhận được câu giải thích đọc được thay vì lỗi kỹ thuật.</p>
+  </section>
+
+  <section>
+    <h2>ADK làm đúng năm việc README mô tả</h2>
+    <p>Thay vì chỉ mở giao diện web, agent được chạy trực tiếp qua <code>Runner</code> để in ra từng bước. Một lượt hoàn chỉnh bắt được như sau:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>ADK Runner — vòng lặp function calling</div>
+<pre>USER: Kiem tra xem server thoi tiet co dang hoat dong khong?
+
+  <span class="c-sun">[Gemini yêu cầu]</span> health_check({})
+  <span class="c-rain">[MCP server trả]</span> {'content': [{'type': 'text',
+     'text': '✅ Weather MCP Server is running! …'}]}
+  <span class="c-rain">[Gemini trả lời]</span> Hệ thống thời tiết đang hoạt động.</pre>
+    </div>
+    <p>Ba dòng này chứng minh trọn vẹn chuỗi trách nhiệm mà README vẽ:</p>
+    <ol class="steps">
+      <li>ADK kết nối MCP server qua <code>StreamableHTTPConnectionParams</code></li>
+      <li><code>McpToolset</code> tự khám phá tool — agent không hard-code tên tool nào</li>
+      <li>Ba tool được truyền cho Gemini dưới dạng function declarations</li>
+      <li>ADK điều phối: Gemini chọn <code>health_check</code>, ADK gọi server, đưa kết quả về cho Gemini</li>
+      <li><code>adk web</code> phục vụ giao diện chat tại <code>127.0.0.1:8000</code></li>
+    </ol>
+    <p class="note">So với bài 01, khác biệt nằm ở chỗ <em>không dòng code nào trong repo viết vòng lặp này</em>. Bài 01 phải tự viết <code>while resp.function_calls</code>; ở đây ADK lo toàn bộ, lập trình viên chỉ khai báo <code>Agent(model=…, tools=[weather_tools])</code>.</p>
+  </section>
+
+  <section>
+    <h2>Vấn đề phát hiện — đã sửa</h2>
+    <p>Hai lỗi đầu đã được vá và chạy lại xác nhận. Việc sửa lỗi 1 còn làm lộ thêm <strong>hai lỗi nữa</strong> vốn bị nó che khuất: hai <code>print()</code> ghi ra stdout làm hỏng kênh JSON-RPC ở chế độ stdio, và <code>EXPOSE 8080</code> trong Dockerfile trong khi app mặc định cổng 8085. Cả bốn nay đều đã sửa.</p>
+    <div class="findings">
+      <div class="finding critical">
+        <span class="tag">Lỗi 1 · chọn transport bằng isatty · weather.py:145</span>
+        <p><code>is_standalone = len(sys.argv) == 1 and sys.stdin.isatty()</code> — server quyết định chạy HTTP hay stdio dựa vào việc stdin có phải terminal không. Chạy nền, chạy qua script, chạy trong CI đều không có TTY, nên server âm thầm rơi vào chế độ stdio và cổng 8085 không bao giờ mở, trong khi agent vẫn chờ ở <code>localhost:8085</code>.</p>
+        <p>Cách đi vòng không sửa code: đặt <code>PORT=8085</code> để nhánh <code>is_cloud_run</code> nhận giá trị đúng.</p>
+      </div>
+      <div class="finding critical">
+        <span class="tag">Lỗi 2 · check sai đích · verify_setup.py:85</span>
+        <p>Hàm <code>check_mcp_server()</code> kiểm tra một URL Cloud Run hard-code từ lần triển khai của tác giả gốc, <em>không phải</em> <code>localhost:8085</code> mà agent thực sự dùng. Script báo “✅ MCP server reachable” kể cả khi server nội bộ đang tắt — và sẽ báo đỏ nếu instance Cloud Run kia bị xoá, dù bài lab hoàn toàn bình thường.</p>
+      </div>
+      <div class="finding">
+        <span class="tag">Quan sát · mô tả tool làm nhiễu model</span>
+        <p>Chuỗi trả về của <code>health_check</code> có câu “Ready to provide weather data for <em>Australian cities</em> and worldwide”. Khi hỏi tiếp về Hà Nội trong cùng phiên, Gemini từ chối gọi <code>get_current_weather</code> và trả lời rằng nó chỉ hỗ trợ các thành phố Úc. Nội dung tool trả về đã trở thành ràng buộc ngoài ý muốn lên hành vi model.</p>
+      </div>
+      <div class="finding">
+        <span class="tag">Bảo trì · phụ thuộc đã ngừng hỗ trợ</span>
+        <p><code>mcp-client/pyproject.toml</code> khai báo <code>google-generativeai</code>. Gói này đã ngừng phát triển; import nó sinh <code>FutureWarning</code> yêu cầu chuyển sang <code>google-genai</code>. Agent không thực sự dùng gói này — có thể gỡ khỏi dependencies.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dockerfile — build và chạy thật</h2>
+    <p>Thư mục <code>mcp-server</code> có sẵn <code>Dockerfile</code> nhắm tới Cloud Run. README không nhắc tới nó, nên nó chưa từng được kiểm chứng. Build thành công, image 326 MB:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>docker build -t weather-mcp:lab04 .</div>
+<pre>#11 naming to docker.io/library/<span class="c-rain">weather-mcp:lab04</span>  done
+#11 DONE 7.1s</pre>
+    </div>
+    <p>Chạy container <strong>đúng như <code>CMD</code> định nghĩa</strong> lộ ra chính lỗi <code>isatty</code> ở trên, lần này ở dạng nguy hiểm hơn:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>docker run --rm -p 8086:8080 weather-mcp:lab04</div>
+<pre><span class="c-rain">✅ MCP server initialized with Streamable HTTP transport</span>
+🔧 Available tools: get_current_weather, get_forecast, health_check
+<span class="c-alert">Starting FastMCP server in stdio mode for local client</span></pre>
+    </div>
+    <p>Hai dòng này <strong>mâu thuẫn nhau</strong>. Dòng đầu là <code>print()</code> vô điều kiện ở <code>weather.py:138</code>, luôn khẳng định đang dùng HTTP. Dòng cuối mới là sự thật: container không có TTY nên rơi vào stdio, và cổng 8080 không bao giờ mở dù <code>EXPOSE 8080</code> và <code>-p</code> đã khai báo.</p>
+    <p>Thêm <code>-e PORT=8080</code> thì chạy đúng, và MCP hoạt động xuyên qua container — đủ 3 tool, <code>health_check</code> trả kết quả bình thường:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>docker run -e PORT=8080 -p 8086:8080 · rồi list_tools qua :8086</div>
+<pre>Uvicorn running on http://0.0.0.0:8080
+lab04-test-b  Up 6 seconds  0.0.0.0:8086-&gt;8080/tcp
+
+Server: <span class="c-rain">'weather'</span>  protocol=2025-11-25
+So tool cong bo: <span class="c-rain">3</span>
+health_check() -&gt; ✅ Weather MCP Server is running!</pre>
+    </div>
+    <p class="note">Trên Cloud Run thì Dockerfile này vẫn chạy đúng, vì nền tảng tự đặt biến <code>PORT</code>. Nhưng chạy <code>docker run</code> ở máy — cách kiểm thử image trước khi deploy — thì im lặng hỏng. Đây là kiểu lỗi chỉ lộ ra đúng lúc người ta cần nó nhất.</p>
+  </section>
+
+  <section>
+    <h2>Dữ liệu thời tiết thật</h2>
+    <p>Sau khi có <code>WEATHERAPI_KEY</code>, cả ba tool trả dữ liệu thật từ WeatherAPI.com. Lưu ý <code>API_KEY</code> được đọc <strong>một lần lúc import</strong> (<code>weather.py:16</code>) nên phải khởi động lại server sau khi đặt biến — và <code>weather.py</code> không nạp dotenv, nên file <code>.env</code> ở thư mục server sẽ không có tác dụng.</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>get_current_weather('Hanoi')</div>
+<pre>Current Weather for Hanoi, , Vietnam:
+
+Temperature:  <span class="c-rain">34.4°C (94.0°F)</span>
+Feels like:   <span class="c-sun">41.9°C (107.4°F)</span>
+Condition:    Sunny
+Humidity:     57%
+Wind:         6.8 km/h S
+Last updated: 2026-08-28 16:00</pre>
+    </div>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>get_forecast('Danang', days=3)</div>
+<pre>2026-08-28:  High 29.8°C  Low 22.3°C  Overcast            <span class="c-dim">mưa 28%</span>
+2026-08-29:  High 25.6°C  Low 22.2°C  Overcast            <span class="c-dim">mưa 36%</span>
+2026-08-30:  High 22.0°C  Low 20.5°C  Patchy rain nearby  <span class="c-rain">mưa 90%</span></pre>
+    </div>
+    <p>Hai trường hợp biên cũng đúng: <code>get_current_weather('Sydney')</code> trả <em>“Sydney, New South Wales, Australia — 16.1°C, Overcast”</em>, còn thành phố không tồn tại trả thông báo lỗi có kiểm soát thay vì exception.</p>
+  </section>
+
+  <section>
+    <h2>Toàn bộ ngăn xếp — chạy thật từ đầu đến cuối</h2>
+    <p>Với dữ liệu thật đã thông, agent được chạy lại để kiểm chứng chuỗi đầy đủ: ADK → Gemini chọn tool → MCP server → WeatherAPI → Gemini tổng hợp.</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>ADK Runner · dữ liệu thật</div>
+<pre>USER: Du bao Da Nang 3 ngay toi co mua khong?
+
+  <span class="c-sun">[Gemini yêu cầu]</span> get_forecast({'city': 'Danang', 'days': 3})
+  <span class="c-rain">[MCP trả]</span> 'Weather Forecast for Danang… 2026-08-28: High 29.8°C…'
+  <span class="c-rain">[Gemini trả lời]</span>
+   • 28/08: nhiều mây, khả năng mưa thấp (28%)
+   • 29/08: nhiều mây, mưa tăng nhẹ (36%)
+   • 30/08: <span class="c-rain">khả năng cao có mưa (90%)</span>
+   Tóm lại… ngày thứ ba khả năng mưa rất lớn, nên chuẩn bị áo mưa hoặc ô.</pre>
+    </div>
+    <p class="note">Đây là điểm khác biệt lớn nhất so với bài 01. Gemini không chỉ đọc lại số liệu — nó <strong>tổng hợp qua ba ngày</strong> và rút ra kết luận hành động (“ngày thứ ba khả năng mưa rất lớn”). Toàn bộ vòng lặp do ADK điều phối; không dòng code nào trong repo viết nó.</p>
+  </section>
+
+  <section>
+    <h2>Còn lại: khoá Gemini bị giới hạn IP</h2>
+    <p>Khoá ghi trong <code>mcp-client/.env</code> bị chặn IP <code>14.238.145.226</code> với <code>403 API_KEY_IP_ADDRESS_BLOCKED</code>. Một khoá khác trên máy <strong>không</strong> bị giới hạn và chạy tốt, nhưng ở tier khác nên <code>gemini-2.5-flash</code> trả 404; hai model dùng được là <code>gemini-3-flash-preview</code> và <code>gemini-3.1-flash-lite</code>. Mọi kết quả ở trên chạy bằng cấu hình thay thế này.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Hướng xử lý</th><th>Đánh đổi</th></tr></thead>
+        <tbody>
+          <tr><td>Gỡ giới hạn IP trên khoá gốc</td><td>Giữ nguyên <code>gemini-2.5-flash</code> như giáo trình, không sửa dòng nào</td></tr>
+          <tr><td>Đổi sang khoá kia + model mới</td><td>Chạy được ngay, nhưng phải sửa <code>MODEL</code> ở bài 01 và <code>agent.py</code> ở bài 04</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>Võ Hồ Nhật Nam · 2A202601700</span>
+    <span>Day26-MCP-Tools-Integration</span>
+    <span>Mã nguồn giữ nguyên, không chỉnh sửa</span>
+  </footer>
+
+</div>

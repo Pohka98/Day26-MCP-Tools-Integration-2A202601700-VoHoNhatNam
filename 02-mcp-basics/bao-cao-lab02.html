@@ -1,0 +1,398 @@
+<title>Kiểm chứng MCP Basics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+:root{
+  --ground:#F2F4F6;
+  --surface:#FFFFFF;
+  --surface-2:#E9EDF1;
+  --ink:#1A1F26;
+  --ink-2:#454F5C;
+  --ink-3:#6B7683;
+  --line:#D3DAE1;
+  --line-strong:#B4BEC8;
+  --rain:#2E6B8A;
+  --rain-soft:#DDEAF1;
+  --sun:#B8791F;
+  --sun-soft:#F7EBD6;
+  --term-bg:#1B2129;
+  --term-ink:#D6DEE7;
+  --term-dim:#7C8899;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161B;
+    --surface:#1A2027;
+    --surface-2:#232B34;
+    --ink:#E6EBF0;
+    --ink-2:#B0BAC6;
+    --ink-3:#818D9B;
+    --line:#2C353F;
+    --line-strong:#3D4854;
+    --rain:#6FB4D6;
+    --rain-soft:#16303D;
+    --sun:#E0A24A;
+    --sun-soft:#392A13;
+    --term-bg:#0C1015;
+    --term-ink:#D6DEE7;
+    --term-dim:#6B7788;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161B;
+  --surface:#1A2027;
+  --surface-2:#232B34;
+  --ink:#E6EBF0;
+  --ink-2:#B0BAC6;
+  --ink-3:#818D9B;
+  --line:#2C353F;
+  --line-strong:#3D4854;
+  --rain:#6FB4D6;
+  --rain-soft:#16303D;
+  --sun:#E0A24A;
+  --sun-soft:#392A13;
+  --term-bg:#0C1015;
+  --term-ink:#D6DEE7;
+  --term-dim:#6B7788;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:60rem;
+  margin:0 auto;
+  padding:clamp(1.5rem,4vw,4rem) clamp(1.1rem,4vw,2.5rem) 5rem;
+  display:flex;
+  flex-direction:column;
+  gap:3.25rem;
+}
+
+h1,h2,h3,.eyebrow,.pill,.metaK,th{
+  font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+}
+
+.masthead{display:flex;flex-direction:column;gap:1.4rem}
+.eyebrow{
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rain);
+}
+h1{
+  font-size:clamp(2.1rem,6vw,3.4rem);
+  font-weight:800;line-height:1.02;letter-spacing:-.022em;
+  margin:0;text-wrap:balance;
+}
+.deck{
+  margin:0;max-width:34em;
+  font-size:clamp(1.02rem,2.2vw,1.19rem);
+  color:var(--ink-2);
+}
+.meta{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:3px;
+  overflow:hidden;
+}
+.meta div{background:var(--surface);padding:.8rem 1rem}
+.metaK{
+  display:block;font-size:.65rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:.25rem;
+}
+.metaV{font-size:.97rem;font-weight:600}
+.metaV.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.87rem;font-weight:400}
+
+section{display:flex;flex-direction:column;gap:1.1rem}
+h2{
+  font-size:1.42rem;font-weight:700;letter-spacing:-.014em;
+  margin:0;padding-bottom:.55rem;border-bottom:2px solid var(--ink);
+  text-wrap:balance;
+}
+h3{font-size:1.03rem;font-weight:700;margin:0;letter-spacing:-.005em}
+p{margin:0;max-width:68ch}
+a{color:var(--rain);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--rain);outline-offset:3px}
+strong{font-weight:600}
+code{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.83em;background:var(--surface-2);
+  padding:.1em .34em;border-radius:2px;
+}
+
+.term{
+  background:var(--term-bg);border-radius:4px;overflow:hidden;
+  border:1px solid var(--line-strong);
+}
+.termbar{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-bottom:1px solid rgba(255,255,255,.09);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.06em;color:var(--term-dim);
+}
+.dot{width:8px;height:8px;border-radius:50%;background:#3D4854;flex:none}
+.term pre{
+  margin:0;padding:1rem 1.1rem;overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.79rem;line-height:1.75;color:var(--term-ink);
+}
+.c-dim{color:var(--term-dim)}
+.c-rain{color:#7FC4E3}
+.c-sun{color:#E6B366}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.94rem}
+th{
+  text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  padding:.7rem 1rem;border-bottom:1px solid var(--line-strong);
+  white-space:nowrap;
+}
+td{padding:.72rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.8rem}
+td.num{font-variant-numeric:tabular-nums;font-weight:600}
+.pill{
+  display:inline-block;white-space:nowrap;
+  font-size:.68rem;font-weight:700;letter-spacing:.05em;
+  padding:.2rem .55rem;border-radius:2px;
+}
+.ok{background:var(--rain-soft);color:var(--rain)}
+.warn{background:var(--sun-soft);color:var(--sun)}
+
+ol.steps{
+  margin:0;padding:0;list-style:none;
+  display:flex;flex-direction:column;gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;
+  counter-reset:s;
+}
+ol.steps li{
+  background:var(--surface);padding:.75rem 1rem;
+  display:grid;grid-template-columns:1.6rem 1fr;gap:.9rem;align-items:baseline;
+  counter-increment:s;font-size:.96rem;
+}
+ol.steps li::before{
+  content:counter(s,decimal-leading-zero);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.74rem;font-weight:700;color:var(--rain);
+}
+
+.finding{
+  border:1px solid var(--sun);border-left:4px solid var(--sun);
+  border-radius:3px;background:var(--surface);
+  padding:1.15rem 1.3rem;display:flex;flex-direction:column;gap:.7rem;
+}
+.finding .tag{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:.67rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--sun);
+}
+
+.versus{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem}
+.card{
+  border:1px solid var(--line);border-radius:3px;background:var(--surface);
+  padding:1rem 1.15rem;display:flex;flex-direction:column;gap:.6rem;
+}
+.card.sun{border-top:3px solid var(--sun)}
+.card.rain{border-top:3px solid var(--rain)}
+.card h3{font-size:.95rem}
+.card .who{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.04em;color:var(--ink-3);
+}
+.card p{font-size:.9rem}
+.card .big{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:2.4rem;font-weight:800;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.card.sun .big{color:var(--sun)}
+.card.rain .big{color:var(--rain)}
+.card .unit{font-size:.8rem;font-weight:400;color:var(--ink-3);margin-left:.35rem}
+
+.note{
+  font-size:.9rem;color:var(--ink-2);
+  border-left:2px solid var(--line-strong);padding-left:.9rem;max-width:68ch;
+}
+
+footer{
+  border-top:1px solid var(--line);padding-top:1.1rem;
+  font-size:.83rem;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Day 26 · MCP Tools Integration · Lab 02</div>
+    <h1>Kiểm chứng MCP Basics</h1>
+    <p class="deck">Cùng tool <code>get_weather</code>, nhưng tách ra server độc lập. Output khớp README từng ký tự; hai khẳng định cốt lõi — schema tự sinh và server tự thực thi — đều được chứng minh bằng dữ liệu chạy thật.</p>
+    <div class="meta">
+      <div><span class="metaK">Học viên</span><span class="metaV">Võ Hồ Nhật Nam</span></div>
+      <div><span class="metaK">Mã học viên</span><span class="metaV mono">2A202601700</span></div>
+      <div><span class="metaK">Ngày chạy</span><span class="metaV">28 / 08 / 2026</span></div>
+      <div><span class="metaK">MCP protocol</span><span class="metaV mono">2025-11-25</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Chạy theo README</h2>
+    <p>Bài này <strong>không cần API key</strong> — nó demo riêng lớp giao thức, độc lập với model. Client tự khởi động server qua stdio.</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>PowerShell — 02-mcp-basics</div>
+<pre><span class="c-dim">PS&gt;</span> cd 02-mcp-basics
+<span class="c-dim">PS&gt;</span> python weather_client.py
+
+Tools server cung cấp:
+  - get_weather: <span class="c-rain">Lấy thời tiết hiện tại của một thành phố.</span>
+
+call_tool get_weather(city='Hanoi'):
+  -&gt; Hanoi: 29°C, trời mưa
+
+call_tool get_weather(city='Danang'):
+  -&gt; Danang: 30°C, nhiều mây
+
+call_tool get_weather(city='Haiphong'):
+  -&gt; Haiphong: 33°C, mưa rào</pre>
+    </div>
+    <p>Trùng <strong>từng ký tự</strong> với mục “Kết quả mong đợi” trong README. Môi trường: Python 3.14.6 · mcp 2.1.1 · server tự giới thiệu tên <code>weather</code>.</p>
+  </section>
+
+  <section>
+    <h2>Khẳng định 1 — schema tự sinh từ type hints</h2>
+    <p>Đây là điểm README nhấn mạnh nhất. Dưới đây là schema <em>thật</em> mà server công bố qua <code>list_tools()</code>, dump nguyên văn tại runtime:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>list_tools() → input_schema</div>
+<pre>{
+  <span class="c-rain">"properties"</span>: {
+    <span class="c-rain">"city"</span>: { "title": "City", <span class="c-rain">"type": "string"</span> }
+  },
+  <span class="c-rain">"required"</span>: [ "city" ],
+  "type": "object",
+  "title": "get_weatherArguments"
+}</pre>
+    </div>
+    <p>Toàn bộ schema trên sinh ra từ <strong>4 dòng</strong> source, không có dòng nào mô tả schema bằng tay:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Trong source</th><th>Sinh ra trong schema</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">city: str</td><td class="mono">"type": "string"</td></tr>
+          <tr><td>tham số không có giá trị mặc định</td><td class="mono">"required": ["city"]</td></tr>
+          <tr><td>docstring của hàm</td><td>description = “Lấy thời tiết hiện tại của một thành phố.”</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Khẳng định 2 — server thực thi, không phải client</h2>
+    <p>Ở bài 01, <em>app</em> chạy hàm. Ở đây trách nhiệm đó chuyển hẳn sang tiến trình server. Hai bằng chứng độc lập:</p>
+    <ol class="steps">
+      <li><code>hasattr(weather_client, 'get_weather')</code> trả về <strong>False</strong> — client không hề có hàm đó, nó chỉ gửi tên tool qua stdio</li>
+      <li>Gọi <code>city="Hue"</code> (không có trong <code>_MOCK_DB</code>) trả về <code>'Hue: 28°C, không có dữ liệu chi tiết'</code> — nhánh mặc định nằm trong server chạy, client không biết gì về <code>_MOCK_DB</code></li>
+    </ol>
+    <p class="note">Bằng chứng thứ hai mạnh hơn bằng chứng thứ nhất: nó cho thấy client không chỉ thiếu hàm, mà còn không nắm được cả <em>dữ liệu</em> lẫn <em>logic xử lý trường hợp thiếu dữ liệu</em>. Đúng như README nói: “client không cần biết code bên trong”.</p>
+  </section>
+
+  <section>
+    <h2>Một chỗ README nói quá</h2>
+    <div class="finding">
+      <span class="tag">Số liệu lệch</span>
+      <p>Mục “So sánh code: Khai báo tool” ghi <strong>“30 dòng schema viết tay”</strong> so với 4 dòng của MCP. Đếm thực tế trong <code>01-function-calling/weather_function_calling.py</code> chỉ có <strong>15 dòng</strong> — và chính README của bài 01 cũng tự ghi là 15.</p>
+    </div>
+    <div class="versus">
+      <div class="card sun">
+        <span class="who">01 · function calling</span>
+        <h3>FunctionDeclaration viết tay</h3>
+        <div class="big">15<span class="unit">dòng</span></div>
+        <p>Dòng 27–41. README bài 02 ghi là 30.</p>
+      </div>
+      <div class="card rain">
+        <span class="who">02 · mcp</span>
+        <h3>@mcp.tool() tự sinh</h3>
+        <div class="big">4<span class="unit">dòng</span></div>
+        <p>Dòng 29–32. Đúng như README ghi.</p>
+      </div>
+    </div>
+    <p>Tỷ lệ thật là <strong>15 → 4</strong>, giảm khoảng 73%. Con số này đã đủ thuyết phục, không cần thổi lên gấp đôi.</p>
+    <p class="note"><strong>Đã sửa:</strong> README bài 02 nay ghi “15 dòng schema viết tay”, khớp với README bài 01 và với số đếm thật.</p>
+  </section>
+
+  <section>
+    <h2>Đăng ký server với AI client</h2>
+    <p>README hướng dẫn dùng <code>claude mcp add</code>. Máy này chạy Claude Code dưới dạng extension VS Code nên không có CLI <code>claude</code> trong PATH; lệnh đó chỉ sinh ra file cấu hình, nên file được tạo trực tiếp ở phạm vi project:</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>.mcp.json — gốc repo</div>
+<pre>{
+  "mcpServers": {
+    <span class="c-rain">"weather"</span>: {
+      "command": "python",
+      "args": ["…\\02-mcp-basics\\weather_server.py"]
+    }
+  }
+}</pre>
+    </div>
+    <p>Kiểm chứng bằng cách đọc chính file này rồi kết nối bằng đúng <code>command</code> + <code>args</code> trong đó, chạy từ một thư mục hoàn toàn khác (<code>C:\Users\vohon</code>):</p>
+    <div class="term">
+      <div class="termbar"><span class="dot"></span>kết quả</div>
+<pre>Ket noi OK -&gt; server <span class="c-rain">'weather'</span>
+Tool cong bo: ['get_weather']
+call_tool -&gt; Hanoi: 29°C, trời mưa</pre>
+    </div>
+    <p class="note">Chạy được từ thư mục không liên quan chứng minh đường dẫn tuyệt đối trong cấu hình là đúng và không phụ thuộc thư mục hiện hành — điều kiện để AI client khởi động server ở bất kỳ đâu.</p>
+  </section>
+
+  <section>
+    <h2>Bảng kiểm chứng tổng hợp</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Mục trong README</th><th>Kết quả</th><th>Bằng chứng</th></tr></thead>
+        <tbody>
+          <tr><td>Cách chạy, không cần API key</td><td><span class="pill ok">Khớp</span></td><td>Chạy không set biến môi trường nào</td></tr>
+          <tr><td>Kết quả mong đợi</td><td><span class="pill ok">Khớp</span></td><td>Trùng từng ký tự</td></tr>
+          <tr><td>Bước 1 — khám phá bằng list_tools</td><td><span class="pill ok">Khớp</span></td><td>Client không hard-code tool</td></tr>
+          <tr><td>Bước 2 — server thực thi</td><td><span class="pill ok">Khớp</span></td><td>Client không có hàm, không biết _MOCK_DB</td></tr>
+          <tr><td>Schema tự sinh từ type hints</td><td><span class="pill ok">Khớp</span></td><td class="mono">input_schema dump tại runtime</td></tr>
+          <tr><td>MCP 4 dòng khai báo</td><td><span class="pill ok">Khớp</span></td><td class="mono">dòng 29–32</td></tr>
+          <tr><td>“FC 30 dòng schema viết tay”</td><td><span class="pill warn">Lệch</span></td><td>Thực tế 15 dòng</td></tr>
+          <tr><td>Đăng ký với AI client</td><td><span class="pill ok">Xong</span></td><td class="mono">.mcp.json, phạm vi project</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ba nhược điểm của bài 01 đã được gỡ</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Nhược điểm ở bài 01</th><th>MCP xử lý thế nào</th></tr></thead>
+        <tbody>
+          <tr><td>Schema viết tay 15 dòng</td><td><code>@mcp.tool()</code> sinh schema từ type hints — còn 4 dòng, không thể lệch với hàm thật vì cùng một nguồn</td></tr>
+          <tr><td>Tool gắn chặt trong app</td><td>Tool sống trong <code>weather_server.py</code> riêng; client nào cắm vào cũng dùng được, không cần chép code</td></tr>
+          <tr><td>Mỗi provider một format</td><td>Client nói giao thức MCP chuẩn (<code>2025-11-25</code>), không phụ thuộc SDK của nhà cung cấp nào</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Bài <strong>03 — Production</strong> đi tiếp sang Auth, Tool Registry và Versioning.</p>
+  </section>
+
+  <footer>
+    <span>Võ Hồ Nhật Nam · 2A202601700</span>
+    <span>Day26-MCP-Tools-Integration</span>
+    <span>Mã nguồn giữ nguyên, không chỉnh sửa</span>
+  </footer>
+
+</div>
