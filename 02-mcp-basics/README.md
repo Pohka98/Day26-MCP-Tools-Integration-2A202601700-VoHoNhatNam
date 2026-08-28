@@ -130,7 +130,7 @@ Bước 3 — TÁI SỬ DỤNG: viết 1 lần, dùng mọi nơi
 
 ```
 Function Calling (01):                    MCP (02):
-30 dòng schema viết tay                   4 dòng, tự sinh schema
+15 dòng schema viết tay                   4 dòng, tự sinh schema
 
 types.FunctionDeclaration(                @mcp.tool()
   name="get_weather",                     def get_weather(city: str) -> str:
