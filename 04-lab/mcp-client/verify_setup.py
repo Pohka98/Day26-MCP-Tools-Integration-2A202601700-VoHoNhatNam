@@ -79,31 +79,31 @@ def check_agent_structure():
     return all_exist
 
 def check_mcp_server():
-    """Check if MCP server is accessible"""
+    """Check if the MCP server the agent actually uses is accessible"""
     print("\n🔍 Checking MCP server connectivity...")
-    
-    server_url = "https://weather-mcp-server-oze7nwnjba-as.a.run.app"
-    
+
+    # Phải trùng MCP_SERVER_URL trong weather_agent/agent.py. Trước đây hàm này
+    # ping một URL Cloud Run hard-code, nên nó báo xanh cả khi server nội bộ tắt.
+    from weather_agent.agent import MCP_SERVER_URL as server_url
+
     try:
         import httpx
         import asyncio
-        
+
         async def test_connection():
             async with httpx.AsyncClient() as client:
                 response = await client.get(server_url, timeout=10.0)
                 return response.status_code
-        
+
+        # Bất kỳ mã HTTP nào cũng nghĩa là server đang lắng nghe. Endpoint MCP
+        # từ chối GET trần (400/405/406), đó vẫn là dấu hiệu server sống.
         status_code = asyncio.run(test_connection())
-        
-        if status_code in [200, 404]:  # 404 is expected for GET on MCP endpoint
-            print(f"✅ MCP server reachable at {server_url}")
-            return True
-        else:
-            print(f"⚠️  MCP server returned status {status_code}")
-            return False
-            
+        print(f"✅ MCP server reachable at {server_url} (HTTP {status_code})")
+        return True
+
     except Exception as e:
-        print(f"❌ Cannot reach MCP server: {e}")
+        print(f"❌ Cannot reach MCP server at {server_url}: {e}")
+        print("   Start it with: cd ../mcp-server && uv run python weather.py")
         return False
 
 def check_agent_import():
