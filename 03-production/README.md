@@ -50,8 +50,9 @@ Client                                Server
 ```
 
 - Token hợp lệ → truy cập tool bình thường
-- Thiếu token → `401`
-- Token sai → `403`
+- Thiếu token → `401` kèm header `WWW-Authenticate: Bearer error="invalid_token"`
+- Token sai → `401` (cũng là `invalid_token`) — đúng chuẩn RFC 6750
+- `403` dành cho trường hợp khác: token **hợp lệ** nhưng thiếu scope cần thiết
 - Logic tool không biết gì về auth — SDK xử lý ở tầng transport
 
 ---
